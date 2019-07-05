@@ -1,0 +1,32 @@
+h1 {
+  text-align: center;
+}
+
+#mainContainer {
+  max-width: 80%;
+  margin: 0 auto;
+  background-color: #C9C9C9;
+  min-height: auto;
+}
+
+.formContainer {
+  margin: 0 auto;
+  max-width: 80%;
+  padding: 20px 0;
+}
+
+.formArea h5:not(first-child) {
+  margin-top: 20px;
+}
+
+.inputArea {
+  padding: 5px;
+}
+
+#applyBtn {
+  margin-top: 20px;
+}
+
+.inputArea label {
+  display: block;
+}
