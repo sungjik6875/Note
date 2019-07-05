@@ -1,0 +1,28 @@
+## VS CODE ##
+.vscode/
+
+
+## DIR ##
+/doit/
+
+
+## exe ##
+*.exe
+*.com
+
+
+## package ##
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+*.jar
+
+
+## upload ##
+*.log
+upload/
+logs/
