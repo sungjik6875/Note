@@ -16,4 +16,5 @@
 * Django
 * Datastucture
 * Algorithm
-* Git
+* HTML / CSS 
+
