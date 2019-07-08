@@ -88,7 +88,81 @@ p {
 
 ```scss
 // List
+@each $animal in puma, sea-slug, egret, salamander {
+    
+    .#{$animal}-icon {
+        background-image: url('/images/#{$animal}.png');
+	}
+}
 
-@each $animal in puma, sea-slug
+
+// Map
+@each $header, $size in (h1: 2em, h2: 1.5em, h3: 1.2em) {
+    #{$header} {
+        font-size: $size;
+    }
+}
+```
+
+> 컴파일 결과는 아래와 같다.
+
+```css
+.puma-icon {
+    background-image: url('/images/puma.png');
+}
+
+.sea-slug-icon {
+  background-image: url("/images/sea-slug.png");
+}
+
+.egret-icon {
+  background-image: url("/images/egret.png");
+}
+
+.salamander-icon {
+  background-image: url("/images/salamander.png");
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+```
+
+
+
+##### @while
+
+> 보통 횟수를 특정하기 어려운 경우에 대해 반복할 경우 사용한다.
+
+```scss
+$i : 6;
+@while $i > 0 {
+    .item-#{$i} { width: 2em * $i; }
+    $i: $i - 2;
+}
+```
+
+> 컴파일 결과는 아래와 같다.
+
+```css
+.item-6 {
+    width: 12em;
+}
+
+.item-4 {
+    width: 8em;
+}
+
+.item-2 {
+    width: 4em;
+}
 ```
 
