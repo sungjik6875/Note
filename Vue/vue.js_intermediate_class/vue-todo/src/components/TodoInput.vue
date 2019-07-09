@@ -21,14 +21,14 @@
 <script>
 import Modal from './common/Modal.vue'
 export default {
-  data: function() {
+  data() {
     return {
       newTodoItem: '',
       showModal: false
     }
   },
   methods: {
-    addTodoItem: function() {
+    addTodoItem() {
       // 저장
       if (this.newTodoItem !== "") {
         // 상위 메소드로 연결시키기, 인자는 뒤에 추가한다.
@@ -41,10 +41,10 @@ export default {
       // 포커스
       this.focusOn();
     },
-    clearInput: function() {
+    clearInput() {
       this.newTodoItem = '';
     },
-    focusOn: function() {
+    focusOn() {
       this.$refs.inputTodo.focus();
     }
   },

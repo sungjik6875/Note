@@ -18,37 +18,36 @@ import TodoFooter from './components/TodoFooter.vue'
 
 export default {
   name: 'app',
-  data: function() {
+  data() {
     return {
       todoItems : []
     }
   },
   methods: {
-    addTodoItem: function(todoItem) {
+    addTodoItem(todoItem) {
       const todo = { completed: false, item: todoItem }
-      
       // localStorage.setItem(this.newTodoItem, todo); : 객체를 직접 DB에 집어넣으면 안된다.
       localStorage.setItem(todoItem, JSON.stringify(todo));  
       this.todoItems.push(todo);   
     },
-    removeTodoItem: function(todoItem, index) {
+    removeTodoItem(todoItem, index) {
       localStorage.removeItem(todoItem.item);
       this.todoItems.splice(index, 1);
       // console.log(todoItem);
     },
-    toggleTodoItem: function(todoItem, index) {
+    toggleTodoItem(todoItem, index) {
       // todoItem이 앱에 존재하므로 this로 접근한다.
       // event로 하위 컴포넌트에서 받고 다시 props로 전달하는 패턴은 바람직하지 않으므로 리팩토링 한 것.
       this.todoItems[index].completed = !this.todoItems[index].completed;
       localStorage.removeItem(todoItem.item);
       localStorage.setItem(todoItem.item, JSON.stringify(todoItem));
     },
-    clearAllItems: function() {
+    clearAllItems() {
       localStorage.clear();
       this.todoItems = [];
     }
   },
-  created: function() {
+  created() {
     if (localStorage.length > 0) {
       for(let i = 0; i < localStorage.length; i++) {
         if (localStorage.key(i) !== 'loglevel:webpack-dev-server') {
