@@ -31,9 +31,8 @@ export default {
     addTodoItem() {
       // 저장
       if (this.newTodoItem !== "") {
-        // 상위 메소드로 연결시키기, 인자는 뒤에 추가한다.
-        this.$emit('addTodoItem', this.newTodoItem);
-         // 초기화, 단일책임 디자인 패턴
+        this.$store.commit('addTodoItem', this.newTodoItem.trim());
+        // 입력창 초기화
         this.clearInput();
       } else {
         this.showModal = !this.showModal;

@@ -2,7 +2,11 @@
 
 
 
+
+
 #### MVC 패턴
+
+------
 
 ```
 Controller -> Model <=> View
@@ -16,7 +20,11 @@ Controller -> Model <=> View
 
 
 
+
+
 #### Flux 패턴
+
+------
 
 > MVC 패턴의 복잡한 데이터 흐름 문제를 해결하는 개발 패턴(단방향 데이터 흐름, Unidirectional data flow)이다. 데이터의 흐름이 여러 갈래로 나뉘지 않고 단방향으로만 처리한다. 데이터 흐름은 아래와 같다.
 
