@@ -9,6 +9,8 @@
 
 
 
+
+
 #### state
 
 ------
@@ -39,6 +41,8 @@ state: {
 
 
 
+
+
 #### getters
 
 ------
@@ -66,6 +70,8 @@ getters: {
 <p>{{ this.$store.getters.getNumber }}</p>
 <p>{{ this.$store.getters.doubleNumber }}</p>
 ```
+
+
 
 
 
@@ -114,3 +120,107 @@ this.$store.commit('modifyState', {
 ```
 
 > 위의 예시와 같이 객체 리터럴을 통해 한번에 여러 개의 인자를 전달하는 것도 가능하다. mutation에서 state로 접근시에는 state가 인자로 들어가므로 state를 통한 직접 접근이 가능하다.
+
+
+
+##### state를 mutations를 통해 변경해야 하는 이유
+
+> 여러 개의 컴포넌트에서 아래의 예시와 같이 state 값을 변경하는 경우 어느 컴포넌트에서 해당 state를 변경했는지 추적하기가 어렵다. 
+
+```javascript
+methods: {
+	increaseCounter() { this.$store.state.counter++; }
+}
+```
+
+> 위와 같은 경우 특정 시점에 어떤 컴포넌트가 state를 접근하여 변경한 건지 확인하기 어렵다. 따라서 뷰의 반응성을 거스르지 않게 명시적으로 상태변화를 수행한다. 이렇게 함으로써 디버깅, 테스팅을 더욱 수월하게 할 수 있다.
+
+
+
+
+
+#### actions
+
+------
+
+> 비동기 처리 로직을 선언하는 메서드이다. 데이터 요청, Promist, ES6 async와 같은 비동기 처리는 모두 actions에 선언한다.
+
+```javascript
+// store.js
+state: {
+	num: 10
+},
+mutations: {
+    doubleNumber(state) {
+        state.num * 2;
+    }
+},
+action: {
+    delayDoubleNumber(context) { 
+        // context로 store의 메서드와 속성에 접근한다.
+        context.commit('doubleNumber');
+    }
+}
+
+// App.vue
+this.$store.dispatch('delayDoubleNumber');
+```
+
+> dispatch를 통해 action을 호출하여 수행할 수 있다. action은 context라는 기본인자를 받는다. 이 인자를 통해 action에서 store의 메서드나 속성에 접근할 수 있다.
+>
+> 위의 예시에서는 action을 통해 mutations에 접근하고, mutations을 통해 state에 접근하는 기본적인 로직이 구현되었다.
+>
+> 다른 예시를 보자.
+
+```javascript
+// store.js
+mutations: {
+    addCounter(state) {
+        state.counter++
+    },
+},
+actions: {
+    delayedAddCounter(Context) {
+        setTimeout(() => context.commit('addCounter'), 2000);
+    }
+}
+
+// App.vue
+methods: {
+    incrementCounter() {
+        this.$store.dispatch('delayedAddCounter');
+    }
+}
+```
+
+> 위의 예시에서도 actions, mutations, state의 순으로 접근하여 state를 변경하는 로직을 구현하였다.
+
+```javascript
+// store.js
+mutations: {
+    setData(state, fetchedData) {
+        state.product = fetchedData;
+    }
+},
+actions: {
+    fetchProductData(context) {
+        return axios.get('url address')
+        .then(response => context.commit('setData', response));
+    }
+}
+
+// App.vue
+methods: {
+    getProduct() {
+        this.$store.dispatch('fetchProductData');
+    }
+}
+```
+
+> 위의 예시에서도 actions, mutations, state의 순으로 접근하여 state를 변경하는 로직을 구현하였다.
+
+
+
+##### 비동기 로직을 actions에 선언해야 하는 이유
+
+> 만약 여러 컴포넌트에서 mutations를 통해 시간 차를 두고 state를 변경하면 state 값의 변화를 추적하기 어렵기 때문에 mutations 속성에는 동기 처리 로직만 구현한다.
