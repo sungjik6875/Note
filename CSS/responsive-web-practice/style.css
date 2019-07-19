@@ -1,22 +1,28 @@
-body {
+* {
   margin: 0;
   padding: 0;
 }
 
-@media all and (min-width:320px) {
-  body {
-    background: #e65d5d;
-  }
+#wrap {
+  width: 90%;
+  height: 500px;
+  margin: 0 auto;
+  display: flex;
+  border: 4px solid #000;
 }
 
-@media all and (min-width:768px) {
-  body {
-    background: #2dcc70;
-  }
+#wrap div {
+  width: 31.25%;
+  height: 100px;
+  display: inline-block;
 }
 
-@media all and (min-width:960px) {
-  body {
-    background: #6fc0d1;
-  }
+#wrap div:first-child {
+  padding: 50px 5.2%;
+  background: gray;
+}
+
+#wrap div:first-child + div {
+  padding: 130px 13.5%;
+  background: blue;;
 }

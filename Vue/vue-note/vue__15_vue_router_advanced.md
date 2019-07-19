@@ -153,3 +153,13 @@ export default {
 <router-link to="/jobs">Jobs</router-link>
 ```
 
+
+
+
+
+#### 라우터에 접근하기
+
+------
+
+> `this.$route`를 사용하여 라우터 정보에 접근할 수 있다. 라우터의 params 속성을 통해 동적으로 할당한 인자에도 접근이 가능하다.
+
