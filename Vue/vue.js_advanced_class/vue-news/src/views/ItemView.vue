@@ -3,12 +3,12 @@
     <section>
       <!-- 사용자 정보 -->
       <user-profile>
-        <div slot="userName">
+        <router-link slot="userName" :to="`/user/${fetchedItem.user}`">
           {{ fetchedItem.user }}
-        </div>
+        </router-link>
 
         <template slot="time">
-          {{ fetchedItem.time_ago }}
+          {{ 'Posted ' + fetchedItem.time_ago }}
         </template>
       </user-profile>
     </section>

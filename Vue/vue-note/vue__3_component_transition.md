@@ -105,7 +105,7 @@ methods: {
 }
 
 // 이벤트를 받는 컴포넌트
-emthods: {
+methods: {
     created: function() {
         eventBus.$on('eventName', arg)
     }

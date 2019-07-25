@@ -37,40 +37,15 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-
+import { mapGetters } from 'vuex';
 
 export default {
-  created() {
-    const path = this.$route.path;
-
-    if (path === '/news') {
-      this.FETCH_NEWS();
-    } else if (path === '/jobs') {
-      this.FETCH_ASK();
-    } else {
-      this.FETCH_JOBS();
-    }
-  },
-  methods: {
-    ...mapActions([
-      'FETCH_NEWS', 'FETCH_ASK', 'FETCH_JOBS'
-    ])
-  },
   computed: {
     ...mapGetters([
-      'fetchedNews', 'fetchedAsk', 'fetchedJobs'
+      'fetchedList'
     ]),
     ListItem() {
-      const path = this.$route.path;
-      
-      if (path === '/news') {
-        return this.fetchedNews;
-      } else if (path === '/jobs') {
-        return this.fetchedAsk;
-      } else {
-        return this.fetchedJobs;
-      }
+      return this.fetchedList;
     },
   }
 }

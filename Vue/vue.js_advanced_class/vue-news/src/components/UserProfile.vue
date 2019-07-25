@@ -11,17 +11,16 @@
       <div class="time">
         <slot name="time">
         </slot>
-      </div>
-    
-      <slot name="karma">
-      </slot>      
+        <slot name="karma">
+        </slot>    
+      </div>  
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  
+
 }
 </script>
 

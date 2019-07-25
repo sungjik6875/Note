@@ -57,12 +57,14 @@
   </div>
 
   <template slot="time">
-	{{ fetchedItem.time_ago }}
+	{{ 'Posted ' + fetchedItem.time_ago }}
   </template>
 </user-profile>
 ```
 
 > ItemView 컴포넌트에서는 karma가 없으므로 karma는 정의하지 않아도 된다. 이런 경우 UserProfile에서 default로 정의한 부분이 대신 렌더링된다. 이 예시에서는 따로 정의하지 않았기 때문에 렌더링 되지 않을 것이다. 
+
+
 
 ```vue
 <!-- UserView.vue -->
@@ -73,13 +75,13 @@
   </div>
 
   <template slot="time">
-    {{ userName.created }}
+    {{ 'Joined ' + userName.created + ',' }}
   </template>
 
-  <div slot="karma">
+  <span slot="karma">
     Karma : {{ userName.karma }}
-  </div>
+  </span>
 </user-profile>
 ```
 
-> UserView 컴포넌트에서는 karma 정보가 있으므로 전부 정의하였다. 
+> UserView 컴포넌트에서는 karma 정보가 있으므로 전부 정의하였다.  또한 슬롯을 정의할 때에는 태그를 정의하지 않기 때문에 상위 컴포넌트에서 각 슬롯에 넣을 태그도 자유롭게 정의할 수 있다.

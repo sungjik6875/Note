@@ -4,27 +4,51 @@
     <transition name='page'>
       <router-view></router-view>
     </transition>
+    <loader 
+      :loading="loading"
+      :color="color"
+      :size="size"
+    >
+    </loader>
   </div>
 </template>
 
 <script>
 import ToolBar from './components/ToolBar';
-import AskView from './views/AskView';
-import JobsView from './views/JobsView';
-import NewsView from './views/NewsView';
-import UserView from './views/UserView';
-import ItemView from './views/ItemView';
-
+import Loader from './components/Loader';
+import LoaderBus from './utils/loader';
 
 export default {
   name: 'app',
+  data() {
+    return {
+      // loader options
+      loading: false,
+      color: '#42b883',
+      size: '15px',
+      margin: '2px',
+      radius: '2px'
+    }
+  },
+  methods: {
+    startLoader() {
+      this.loading = true;
+    },
+    endLoader() {
+      this.loading = false;
+    }
+  },
+  created() {
+    LoaderBus.$on('start:loader', this.startLoader);
+    LoaderBus.$on('end:loader', this.endLoader);
+  },
+  beforeDestroy() {
+    LoaderBus.$off('start:loader');
+    LoaderBus.$off('end:loader');
+  },
   components: {
     ToolBar,
-    AskView,
-    JobsView,
-    NewsView,
-    UserView,
-    ItemView
+    Loader
   }
 }
 </script>

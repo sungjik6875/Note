@@ -6,12 +6,12 @@
       </div>
 
       <template slot="time">
-        {{ userName.created }}
+        {{ 'Joined ' + userName.created + ',' }}
       </template>
 
-      <div slot="karma">
-        Karma : {{ userName.karma }}
-      </div>
+      <span slot="karma">
+        {{ userName.karma }}
+      </span>
     </user-profile>
   </div>
 </template>
