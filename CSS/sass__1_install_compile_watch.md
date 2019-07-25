@@ -35,7 +35,7 @@
 > 이 중 node-sass는 npm으로 다음과 같이 설치 및 확인이 가능하다.
 
 ```bash
-$ npm install -g node-sass
+$ npm install node-sass
 $ node-sass -v
 node-sass 4.12.0  (Wrapper) [JavaScript]
 libsass   3.5.4 (Sass Compiler) [C/C++]

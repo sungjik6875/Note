@@ -1,32 +1,19 @@
 <template>
   <div>
-    <p v-for="job in fetchedJobs">
-      <a :href="job.url" target="_blank">{{ job.title }}</a>
-      <span> | {{ job.time_ago }} by {{ job.domain }}</span>
-    </p>
+    <list-item></list-item>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import ListItem from '../components/ListItem';
 
 export default {
-  created() {
-    this.FETCH_JOBS();
-  },
-  methods: {
-    ...mapActions([
-      'FETCH_JOBS'
-    ])
-  },
-  computed: {
-    ...mapGetters([
-      'fetchedJobs'
-    ])
+  components: {
+    ListItem,
   }
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

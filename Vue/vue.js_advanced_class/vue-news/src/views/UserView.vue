@@ -1,13 +1,24 @@
 <template>
   <div>
-    <p>name : {{ userName.id }}</p>
-    <p>karma : {{ userName.karma }}</p>
-    <p>created: {{ userName.created }}</p>
+    <user-profile>
+      <div slot="userName">
+        {{ userName.id }}
+      </div>
+
+      <template slot="time">
+        {{ userName.created }}
+      </template>
+
+      <div slot="karma">
+        Karma : {{ userName.karma }}
+      </div>
+    </user-profile>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import UserProfile from '../components/UserProfile';
 
 export default {
   created() {
@@ -24,6 +35,9 @@ export default {
     ...mapActions([
       'FETCH_USER'
     ])
+  },
+  components: {
+    UserProfile,
   }
 }
 </script>
