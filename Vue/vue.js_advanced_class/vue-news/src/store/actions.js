@@ -1,67 +1,33 @@
-import { fetchNewsList, fetchJobsList, fetchAskList, fetchUserInfo, fetchAskInfo, fetchList } from '../api/index.js';
+import { fetchUserInfo, fetchAskInfo, fetchList } from '../api/index.js';
 
 export default {
-  // FETCH_NEWS({ commit }) {
-  //   fetchNewsList()
-  //     .then(({ data }) => {
-  //       // console.log(data);
-  //       commit('SET_NEWS', data);
-  //       return data;
-  //     })
-  //     .catch(error => {
-  //       console.log(error);
-  //     })
-  // },
-  // FETCH_JOBS({ commit }) {
-  //   fetchJobsList()
-  //     .then(({ data }) => {
-  //       // console.log(data);
-  //       commit('SET_JOBS', data);
-  //       return data;
-  //     })
-  //     .catch(error => {
-  //       console.log(error)
-  //     })
-  // },
-  // FETCH_ASK({ commit }) {
-  //   fetchAskList()
-  //     .then(({ data }) => {
-  //       // console.log(data);
-  //       commit('SET_ASK', data);
-  //       return data;
-  //     })
-  //     .catch(error => {
-  //       console.log(error)
-  //     })
-  // },
-  FETCH_USER({ commit }, userName) {
-    fetchUserInfo(userName)
-      .then(({ data }) => {
-        // console.log(data);
-        commit('SET_USER', data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+  async FETCH_USER({ commit }, userName) {
+    try {
+      const response = await fetchUserInfo(userName)
+      commit('SET_USER', response.data);
+      return response;
+    } catch(error) {
+      console.log(error);
+    }
   },
-  FETCH_ASKINFO({ commit }, askId) {
-    fetchAskInfo(askId)
-      .then(({ data }) => {
-        // console.log(data);
-        commit('SET_ASKINFO', data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+
+  async FETCH_ASKINFO({ commit }, askId) {
+    try {
+      const response = await fetchAskInfo(askId)
+      commit('SET_ASKINFO', response.data);
+      return response;
+    } catch(error) {
+      console.log(error);
+    }
   },
-  FETCH_LIST({ commit }, pageName) {
-    fetchList(pageName)
-      .then(({ data }) => {
-        // console.log(data);
-        commit('SET_LIST', data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+
+  async FETCH_LIST({ commit }, pageName) {
+    try {
+      const response = await fetchList(pageName)
+      commit('SET_LIST', response.data);
+      return response;
+    } catch(error) {
+      console.log(error);
+    }
   }
 }

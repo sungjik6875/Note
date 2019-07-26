@@ -60,6 +60,8 @@ import AskView from '../views/AskView.vue';
 
 > 이제 위의 컴포넌트를 라우터의 path와 매칭시킨다. 해당 router는 main.js에서 import할 예정이므로 export를 붙여준다. 
 >
+> routes, router는 예약어로 다른 네이밍을 사용할 수 없다. 대문자로 할 경우 에러가 난다. 콘솔 로그 확인시 undefined가 출력된다.
+>
 > `mode: 'history'` 옵션은 라우터 링크를 타고 이동할시 #값을 url에서 제거해주는 옵션이다.
 >
 > 뷰 라우터 인스턴스 내부에 routes를 배열로 정의후, 배열의 각 원소에 `{ path:  ,  component: }`의 객체를 정의한다. path는 url주소, component는 url주소를 입력시 표시될 컴포넌트를 각각 값으로 매핑시킨다.
@@ -88,7 +90,7 @@ export const router = new VueRouter({
 
 
 
-> 이제 main.js에서 정의한 뷰 라우터 객체를 import하여 사용한 다음 뷰 인스턴스 내부에 정의하면 된다.
+> 이제 main.js에서 정의한 뷰 라우터 객체를 import하여 사용한 다음 뷰 인스턴스 내부에 정의하면 된다. 공식문서 가이드에 따르면 뷰라우터 추가시에는 .$mount()를 활용한다. .$mount()는 el속성 처럼 인스턴스를 화면에 부착하는 역할을 한다.
 
 ```javascript
 import { router } from './router/index.js';
@@ -108,8 +110,22 @@ new Vue({
 ------
 
 > router-view 태그를 사용하고 components 속성에 컴포넌트들을 import하여 등록하면 뷰 라우터를 사용하여 컴포넌트를 화면에 표시할 수 있다.
->
-> 예시는 다음과 같다.
+
+```
+<router-link to="url">
+: 페이지 이동 태그, 화면에는 <a href="url">로 표시됨
+```
+
+```
+<router-view>
+: 페이지 표시 태그, 변경되는 url에 따라 해당 컴포넌트를 뿌려주는 영역
+```
+
+> 
+
+
+
+> 뷰 라우터의 사용 예시는 다음과 같다.
 
 ```vue
 <template>
