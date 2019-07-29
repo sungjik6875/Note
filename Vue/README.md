@@ -12,3 +12,4 @@
 
 * do it Vue.js
 * Vue.js 중급 강의 (인프런)
+* Vue.js 완벽 가이드 (인프런)
