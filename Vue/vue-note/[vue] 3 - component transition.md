@@ -41,6 +41,21 @@ v-bind:propsName="상위 컴포넌트의 data 속성"
 
 
 
+##### props validation
+
+```json
+props: {
+	propsData : {
+        type: datatype,
+        required: boolean
+    }
+}
+```
+
+> props의 데이터 타입이나 값에 대해 위와 같이 조건을 설정하여 값의 유효성을 검사할 수 있다.
+
+
+
 ##### 하위 컴포넌트에서 상위 컴포넌트로 전달: event 발생
 
 ```html
