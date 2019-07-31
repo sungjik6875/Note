@@ -1,34 +1,25 @@
 <template>
   <div>
-    <h1>FetchData</h1>
-    <fetch-data url='https://jsonplaceholder.typicode.com/users/1'>
-      <div slot-scope="{ response, loading }">
-        <div v-if="!loading">
-          <div>
-            name : {{ response.name }}
-          </div>
-          <div>
-            email : {{ response.email }}
-          </div>  
-        </div>
-        <div v-else>
-          Loading...
-        </div>
-      </div>
-    </fetch-data>
+    <ul>
+      <slot-item v-for="dog in dogs">
+        {{ dog }}
+        <button v-if="dog === '사모예드'">Click</button>
+      </slot-item>
+    </ul>
   </div>
 </template>
 
 <script>
-import FetchData from './components/FetchData';
+import SlotItem from './components/SlotItem';
 
 export default {
+  data() {
+    return {
+      dogs: ['말라뮤트', '웰시코기', '사모예드', '리트리버', '보더콜리']
+    }
+  },
   components: {
-    FetchData,
+    SlotItem,
   },
 }
 </script>
-
-<style>
-
-</style>
