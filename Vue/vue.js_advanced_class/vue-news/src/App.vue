@@ -39,6 +39,7 @@ export default {
     }
   },
   created() {
+    console.log(process.env.VUE_APP_TITLE);
     LoaderBus.$on('start:loader', this.startLoader);
     LoaderBus.$on('end:loader', this.endLoader);
   },
