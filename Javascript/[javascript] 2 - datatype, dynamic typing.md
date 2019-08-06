@@ -121,6 +121,8 @@ var foo = 'Lee';
 foo = null;  // 참조 정보가 제거됨
 ```
 
+
+
 > 함수가 호출되었을 때 유효한 값을 반환할 수 없는 경우에도 null을 반환한다. 예를 들어 html 요소를 검색해 반환하는 Document.querySelector()는 조건에 부합하는 HTML 요소를 검색할 수 없는 경우, null을 반환한다.
 
 ```js
@@ -129,11 +131,44 @@ var element = document.querySelector('.myElem');
 console.log(element); // null
 ```
 
-> 타입을 나타내는 문자열을 반환하는 typeof 연산자로 null을 연산하면 object가 나온다. 
+
+
+> 타입을 나타내는 문자열을 반환하는 typeof 연산자로 null을 연산하면 object가 나온다. 이는 자바스크립트 설계상의 오류이다.
+>
+> 따라서 null 타입을 확인하기 위해서는 일치 연산자`===`를 사용하여야 한다.
+
+```js
+var foo = null;
+console.log(typeof foo); // object
+
+var foo = null;
+console.log(typeof foo === null); // false
+console.log(foo === null);        // true
+```
 
 
 
-.... null
+##### symbol
+
+```js
+// 심볼 key는 이름의 충돌 위험이 없는 유일한 객체의 프로퍼티 키
+var key = Symbol('key');
+console.log(typeof key); // symbol
+
+var obj = {};
+obj[key] = 'value';
+console.log(obj[key]); // value
+```
+
+> ES6에서 새롭게 추가된 타입으로 변경 불가능한 원시타입의 값이다. 심볼은 주로 이름의 충돌 위험이 없는 객체의 프로퍼티 키를 만들기 위해 사용한다. 심볼은 Symbol 함수를 호출해 생성한다. 이때 생성된 심볼 값은 다른 심볼 값들과 다른 유일한 심볼 값이다.
+
+
+
+##### 객체 타입
+
+> 객체는 데이터와 그 데이터에 관련한 동작(절차, 방법, 기능)을 모두 포함할 수 있는 개념적 존재이다. 즉, 이름과 값을 가지는 데이터를 의미하는 프로퍼티와 동작을 의미하는 메소드를 포함할 수 있는 독립적 주체이다.
+>
+> 자바스크립트는 객체 기반의 스크립트 언어로서 거의 모든 것이 객체이다. 객체는 원시 타입과 다르게 참조에 의한 전달 방식(pass-by-reference)으로 전달된다.
 
 
 
