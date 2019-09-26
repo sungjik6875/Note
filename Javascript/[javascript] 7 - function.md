@@ -241,7 +241,7 @@ foo(1); // 1 undefined
 
 
 
-##### Call By Value / Call By Reference 와 Pure Function / Impure Function
+##### Call By Value / Call By Reference
 
 > 원시 타입인 변수와 객체 타입인 변수가 다르게 동작하였듯이, 원시 타입인 인수와 객체 타입인 인수도 다르게 동작한다. 
 >
@@ -287,4 +287,282 @@ console.log(obj); // Object {name: 'Kim', gender: 'female'}
 
 
 
-순수 함수와 비순수 함수... 부수효과..
+
+
+##### Pure Function / Impure Function
+
+> 원시 타입 인수의 경우 값을 복사하여 매개변수에 전달하므로 함수 몸체에서 그 값을 변경하여도 어떠한 부수효과도 발생시키지 않는다. 그러나 객체 타입 인수는 참조값을 매개변수에 전달하므로 함수 몸체에서 그 값을 변경할 경우 원본 객체가 변경되는 부수효과가 발생한다.
+>
+> 부수효과를 발생시키지 않는 함수를 순수 함수, 발생시키는 함수를 비순수 함수라 한다. 비순수 함수는 복잡성을 증가시키며, 비순수 함수를 최대한 줄임으로써 부수 효과를 줄이는 것이 디버깅 작업을 쉽게 만든다.
+
+
+
+
+
+##### return
+
+```js
+function calculateArea(width, height) {
+  var area = width * height;
+  return area; // 단일 값의 반환
+}
+console.log(calculateArea(3, 5)); // 15
+console.log(calculateArea(8, 5)); // 40
+
+function getSize(width, height, depth) {
+  var area = width * height;
+  var volume = width * height * depth;
+  return [area, volume]; // 복수 값의 반환
+}
+
+console.log('area is ' + getSize(3, 2, 3)[0]);   // area is 6
+console.log('volume is ' + getSize(3, 2, 3)[1]); // volume is 18
+```
+
+> 함수는 자신을 호출한 코드에게 수행한 결과를 반환할 수 있다. 반환하고자 할 때 `return`을 사용한다. return에 대한 특징은 다음과 같다.
+
+* return 키워드는 함수를 호출한 코드에게 값을 반환할 때 사용한다.
+* 함수는 배열이나 객체를 활용하여 한 번에 여러 값을 반환할 수 있다.
+* 함수는 반환을 생략할 수 있으며, 이 때에는 암묵적으로 undefined를 반환한다.
+* 자바스크립트 해석기는 return 키워드를 만나면 함수의 실행을 중단한 후, 함수를 호출한 코드로 되돌아간다. 만일 return 키워드 이후에 다른 구문이 존재하면 그 구문은 실행되지 않는다.
+
+
+
+
+
+##### 함수 프로퍼티
+
+> 함수도 객체에 속하므로 프로퍼티를 가질 수 있다.
+
+```js
+function square(number) {
+  return number * number;
+}
+
+square.x = 10;
+square.y = 20;
+
+console.log(square.x, square.y);
+```
+
+> 함수는 일반 객체와는 다른 함수만의 프로퍼티를 갖는다. 다음을 브라우저 콘솔에 입력하여 확인할 수 있다.
+
+```js
+console.dir(square);
+```
+
+> 위 입력에 대한 결과는 다음과 같다.
+
+![example_1](./image/js_7_1.png)
+
+
+
+
+
+##### arguments 프로퍼티
+
+> arguments 객체는 함수 호출 시 전달된 인수(argument)들의 정보를 담고 있는 순회가능한(iterable) 유사 배열 객체(array-like object)이며 함수 내부에서 지역변수처럼 사용된다. 즉, 함수 외부에서는 사용할 수 없다.
+>
+> arguments의 사용 예시는 다음과 같다.
+
+```js
+function multiply(x, y) {
+  console.log(arguments);
+  return x * y;
+}
+
+multiply();        // {}
+multiply(1);       // { '0': 1 }
+multiply(1, 2);    // { '0': 1, '1': 2 }
+multiply(1, 2, 3); // { '0': 1, '1': 2, '2': 3 }
+```
+
+> 위 입력에 대한 결과는 다음과 같다. 
+
+![example_2](./image/js_7_2.png)
+
+> 위의 예시에서 multiply 함수는 인자를 두 개 까지 받는 것으로 정의되었다. 그러나 인자가 없거나, 하나의 인자를 전달하거나 세 개의 인자를 전달하여도 함수 호출 시에러가 발생하지 않는 것을 확인할 수 있다. 게다가 arguments 객체에서도 인자가 출력되는 것을 확인할 수 있다.
+>
+> 자바스크립트에서 매개변수는 인수로 초기화된다. 매개변수의 갯수보다 인수를 적게 전달했을 때 인수가 전달되지 않은 매개변수는 undefined로 초기화된다. 만약 매개변수의 갯수보다 인수를 더 많이 전달한 경우, 초과된 인수는 무시된다.
+>
+> 이러한 자바스크립트의 특성 때문에 런타임 시에 호출된 함수의 인자 갯수를 확인하고 이에 따라 동작을 달리 정의할 필요가 있을 수 있다. 이때 유용하게 사용되는 것이 arguments 객체이다. arguments 객체를 활용하여 매개변수가의 갯수가 확정되지 않은 가변 인자 함수를 구현할 때 유용하게 사용된다.
+>
+> 다음은 arguments 객체를 활용하여 가변 인자의 합을 반환하는 함수를 구현한 예시이다.
+
+```js
+function sum() {
+  var res = 0;
+
+  for (var i = 0; i < arguments.length; i++) {
+    res += arguments[i];
+  }
+
+  return res;
+}
+
+console.log(sum());        // 0
+console.log(sum(1, 2));    // 3
+console.log(sum(1, 2, 3)); // 6
+```
+
+> 자바스크립트는 함수를 호출할 때 인수들과 함께 암묵적으로 arguments 객체가 함수 내부로 전달된다. arguments 객체는 배열의 형태로 인자값 정보를 담고 있지만 실제 배열이 아닌 유사배열객체(array-like object)이다.
+>
+> 유사배열 객체란 배열처럼 length 프로퍼티를 가진 객체를 말한다. 그러나 유사배열객체는 배열이 아니므로 배열 메소드를 사용하는 경우 에러가 발생한다. 따라서 배열 메소드를 사용하기 위해서는 Function.prototype.call, Function.prototype.apply를 사용하여야 하는 번거로움이 있다.
+>
+> 다만 ES6에서는 `...`연산자를 활용하여 쉽게 구현할 수 있다. 예시는 다음과 같다.
+
+```js
+function sum() {
+  if (!arguments.length) return 0;
+
+  // arguments 객체를 배열로 변환
+  var array = Array.prototype.slice.call(arguments);
+  return array.reduce(function (pre, cur) {
+    return pre + cur;
+  });
+}
+
+// ES6
+function sum(...args) {
+   if (!args.length) return 0;
+   return args.reduce((pre, cur) => pre + cur);
+}
+
+console.log(sum(1, 2, 3, 4, 5)); // 15
+```
+
+
+
+
+
+##### caller 프로퍼티
+
+> caller 프로퍼티는 자신을 호출한 함수를 의미한다.
+
+```js
+function foo(func) {
+  var res = func();
+  return res;
+}
+
+function bar() {
+  return 'caller : ' + bar.caller;
+}
+
+console.log(foo(bar)); // function foo(func) {...}
+console.log(bar());    // null (browser에서의 실행 결과)
+```
+
+> 실행 결과는 다음과 같다.
+
+![example_3](./image/js_7_3.png)
+
+
+
+
+
+##### length 프로퍼티
+
+> length 프로퍼티는 함수 정의 시 작성된 매개변수 갯수를 의미한다. arguments.length의 값과는 다를 수 있으므로 주의하여야 한다. arguments.length의 값은 함수 호출 시 인자의 갯수이다.
+
+```js
+function foo() {}
+console.log(foo.length); // 0
+
+function bar(x) {
+  return x;
+}
+console.log(bar.length); // 1
+
+function baz(x, y) {
+  return x * y;
+}
+console.log(baz.length); // 2
+```
+
+
+
+
+
+##### name 프로퍼티
+
+> 함수명을 나타낸다. 기명함수의 경우 함수명을 값으로 갖고 익명함수의 경우 빈 문자열을 값으로 갖는다.
+
+```js
+// 기명 함수 표현식(named function expression)
+var namedFunc = function multiply(a, b) {
+  return a * b;
+};
+// 익명 함수 표현식(anonymous function expression)
+var anonymousFunc = function(a, b) {
+  return a * b;
+};
+
+console.log(namedFunc.name);     // multiply
+console.log(anonymousFunc.name); // ''
+```
+
+
+
+
+
+##### `__proto__` 접근자 프로퍼티
+
+> 모든 객체는 Prototype이라는 내부 슬롯이 있다. Prototype 내부 슬롯은 프로토타입 객체를 가리킨다. 프로토타입 객체란 프로토타입 기반 객체지향 프로그래밍의 근간을 이루는 객체로서 객체간의 상속을 구현하기 위해 사용된다. 즉, 프로토타입 객체는 다른 객체에 공유 프로퍼티를 제공하는 객체를 말한다.
+>
+> `__proto__` 프로퍼티는 Prototype 내부 슬롯이 가리키는 프로토타입 객체에 접근하기 위해 사용하는 접근자 프로퍼티이다. 내부 슬롯에는 직접 접근할 수 없고 간접적인 접근 방법을 제공하는 경우에 한하여 접근할 수 있다. Prototype 내부 슬롯에도 직접 접근할 수 없으며 `__proto__ `접근자를 통해 간접적으로 프로토타입 객체에 접근할 수 있다.
+
+```js
+// __proto__ 접근자 프로퍼티를 통해 자신의 프로토타입 객체에 접근할 수 있다.
+console.log({}.__proto__ === Object.prototype); // true
+```
+
+> 위 예시에서도 확인할 수 있듯, 객체 리터럴로 셍성한 객체의 프로토타입 객체는 Object.prototype이다. `__proto__` 프로퍼티는 객체가 직접 소유하는 프로퍼티가 아니라 모든 객체의 프로토타입 객체인 Object.prototype 객체의 프로퍼티이다. 모든 객체는 상속을 통해 `__proto__` 접근자 프로퍼티를 사용할 수 있다.
+
+```js
+// 객체는 __proto__ 프로퍼티를 소유하지 않는다.
+console.log(Object.getOwnPropertyDescriptor({}, '__proto__'));
+// undefined
+
+// __proto__ 프로퍼티는 모든 객체의 프로토타입 객체인 Object.prototype의 접근자 프로퍼티이다.
+console.log(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__'));
+// {get: ƒ, set: ƒ, enumerable: false, configurable: true}
+
+// 모든 객체는 Object.prototype의 접근자 프로퍼티 __proto__를 상속받아 사용할 수 있다.
+console.log({}.__proto__ === Object.prototype); // true
+```
+
+> 함수도 객체이므로 `__proto__` 접근자 프로퍼티를 통해 프로토타입 객체에 접근할 수 있다.
+
+```js
+// 함수 객체의 프로토타입 객체는 Function.prototype이다.
+console.log((function() {}).__proto__ === Function.prototype); // true
+```
+
+
+
+
+
+##### prototype 프로퍼티
+
+> prototype 프로퍼티는 함수 객체만이 소유하는 프로퍼티이다. 즉 일반 객체에는 prototype 프로퍼티가 없다. prototype 프로퍼티는 함수가 객체를 생성하는 생성자 함수로 사용될 때, 생성자 함수가 생성한 인스턴스의 프로토타입 객체를 가리킨다.
+
+```js
+// 함수 객체는 prototype 프로퍼티를 소유한다.
+console.log(Object.getOwnPropertyDescriptor(function() {}, 'prototype'));
+// {value: {…}, writable: true, enumerable: false, configurable: false}
+
+// 일반 객체는 prototype 프로퍼티를 소유하지 않는다.
+console.log(Object.getOwnPropertyDescriptor({}, 'prototype'));
+// undefined
+```
+
+
+
+
+
+##### IIFE (Immediately Invoke Function Expression)
+
+> 함수의 정의와 동시에 실행되는 함수를 즉시 실행 함수(IIFE)라고 한다. 최초 한번만 호출되며 다시 호출할 수는 없다. 이러한 특징을 이용하여 최초 한번만 실행이 필요한 초기화 처리 등에 사용할 수 있다.
+>
+> 
