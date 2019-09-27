@@ -116,7 +116,30 @@
 { "_id" : ObjectId("5d8c3399d93f16c72879c0ff"), "username" : "hello", "password" : 1111 }
 ```
 
+> projection 옵션 역시 BSON 구조로 기술한다. Document의 필드 중 projection 옵션에서 true로 지정한 필드만이 출력된다. 이때 유의할 점은 둘 이상의 필드에 대해 true, false의 값을 혼용하여 사용하면 에러가 발생한다는 점이다. true로만 정의하거나, false로만 값을 정의해야 한다.
 
+```
+{field1: true, field2: true}
+```
+
+> 활용 예시는 다음과 같다.
+
+```
+> db.user.find({password:1111}, {username:true})
+{ "_id" : ObjectId("5d8c3383d93f16c72879c0fe"), "username" : "jik" }
+{ "_id" : ObjectId("5d8c3399d93f16c72879c0ff"), "username" : "hello" }
+```
+
+> 반면 true, false를 혼용하면 다음과 같은 에러 메시지가 출력된다.
+
+```
+Error: error: {
+    "ok" : 0,
+    "errmsg" : "Projection cannot have a mix of inclusion and exclusion.",
+    "code" : 2,
+    "codeName" : "BadValue"
+}
+```
 
 
 
