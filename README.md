@@ -1,14 +1,10 @@
-> 저의 개인 공부 자료들을 보관하는 곳입니다.
-
-
+> 저의 개인 공부 자료들을 보관하는 곳입니다. 내용 별 출처는 다음과 같습니다.
 
 
 
 #### Javascript
 
 ------
-
-> ##### 출처
 
 ```
 - poiemaweb (https://poiemaweb.com/)
@@ -19,8 +15,6 @@
 #### Vue.js
 
 ------
-
-> ##### 출처
 
 ```
 - do it Vue.js (책)
@@ -35,8 +29,6 @@ Lectured By Captain Pangyo
 
 ------
 
-> ##### 출처
-
 ```
 - 오프라인 강의 노트 필기
 Lectured By John Kang
@@ -48,8 +40,6 @@ Lectured By John Kang
 
 ------
 
-> ##### 출처
-
 ```
 - poiemaweb (https://poiemaweb.com/)
 ```
@@ -60,9 +50,16 @@ Lectured By John Kang
 
 ------
 
-> ##### 출처
-
 ```
 - MongoDB - Javascript로 배우는 NoSQL DB (인프런)
 ```
 
+
+
+#### Datastructure & Algorithm
+
+------
+
+```
+- 프로그래밍 면접 이렇게 준비한다, 4판 (책)
+```
