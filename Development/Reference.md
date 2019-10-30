@@ -1,6 +1,20 @@
-> 저의 개인 공부 자료들을 보관하는 곳입니다. 내용 별 출처는 다음과 같습니다.
+> 아래에 서술된 레퍼런스 외에도 참고한 레퍼런스가 많이 있지만, 모두 담을 수는 없었습니다. 다만 주요한 레퍼런스는 아래와 같습니다.
 
 
+
+## Methodology
+
+
+
+
+
+
+
+
+
+
+
+## Tools
 
 #### Javascript
 
@@ -21,6 +35,8 @@
 - Vue.js 중급 강의 (인프런)
 - Vue.js 완벽 가이드 (인프런)
 Lectured By Captain Pangyo
+
+- Vue.js, Vue-Router, Vuex 공식 문서
 ```
 
 
@@ -56,10 +72,3 @@ Lectured By John Kang
 
 
 
-#### Datastructure & Algorithm
-
-------
-
-```
-- 프로그래밍 면접 이렇게 준비한다, 4판 (책)
-```
