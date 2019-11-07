@@ -8,7 +8,6 @@
 * 비대칭형 암호화 알고리즘
 * TCP / IP
 * HTTP 버전별 내역
-* SSR / CSR
 * Flux
 
 
@@ -26,3 +25,4 @@
 * 연결 리스트
 * Sass
 * PWA
+* CORS 이슈
