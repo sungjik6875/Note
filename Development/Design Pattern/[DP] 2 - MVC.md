@@ -4,7 +4,7 @@
 
 > 디자인 패턴 중 하나로 참고 이미지는 다음과 같다.
 
-![example_1](./image/methodology_7_1.png)
+![example_1](./image/dp_2_1.png)
 
 > MVC 패턴을 구성하는 각 부분에 대한 설명은 다음과 같다.
 
