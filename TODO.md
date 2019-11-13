@@ -6,11 +6,9 @@
 * Linux 명령어
 * ER 다이어그램
 * 비대칭형 암호화 알고리즘
-* HTTP 2
+* HTTP 2 (이진 프로토콜)
 * TCP / IP
 * Flux
-* MA, MSA
-
 * 3계층형 시스템
 * 네트워크 구조와 전송 프로토콜
 * 서버 이중화
@@ -25,3 +23,5 @@
 * Sass
 * PWA
 * CORS 이슈
+* 자바스크립트 프로토타입, ES6 클래스
+* MSA (자세한 부분, Circuit Breaker 등)

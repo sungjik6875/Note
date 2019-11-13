@@ -561,8 +561,154 @@ console.log(Object.getOwnPropertyDescriptor({}, 'prototype'));
 
 
 
-##### IIFE (Immediately Invoke Function Expression)
+##### 즉시실행함수 (IIFE, Immediately Invoke Function Expression)
 
-> 함수의 정의와 동시에 실행되는 함수를 즉시 실행 함수(IIFE)라고 한다. 최초 한번만 호출되며 다시 호출할 수는 없다. 이러한 특징을 이용하여 최초 한번만 실행이 필요한 초기화 처리 등에 사용할 수 있다.
+> 함수의 정의와 동시에 실행되는 함수를 즉시실행함수(IIFE)라고 한다. 최초 한번만 호출되며 다시 호출할 수는 없다. 이러한 특징을 이용하여 최초 한번만 실행이 필요한 초기화 처리 등에 사용할 수 있다.
 >
-> 
+> 예시는 다음과 같으며, 즉시실행함수는 소괄호로 감싸준다. 즉시실행함수에는 함수명이 있는 기명과 없는 익명의 형태가 있다.
+
+```javascript
+// 기명 즉시실행함수
+(function myFunction() {
+    var a = 3;
+    var b = 5;
+    return a*b;
+}());
+
+// 익명 즉시실행함수
+(function() {
+    var a = 3;
+    var b = 5;
+    return a*b;
+}());
+```
+
+> ##### 즉시실행함수와 이름 충돌 방지
+>
+> 자바스크립트의 가장 큰 문제점 중의 하나는 파일이 분리되어 있다 하더라도 글로벌 스코프가 하나이며 글로벌 스코프에 선언된 변수나 함수는 코드 내의 어디서든지 접근이 가능하다는 것이다.
+>
+> 따라서 다른 스크립트 파일 내에서 동일한 이름으로 명명된 변수나 함수가 같은 스코프 내에 존재할 경우 원치 않는 결과를 가져올 수 있다.
+>
+> 이런 경우 즉시실행함수 내에 처리 로직을 모아두면 혹시 있을 수도 있는 변수명이나 함수명의 충돌을 방지할 수 있어 이를 위한 목적으로 즉시실행함수를 사용하기도 한다.
+>
+> 특히 jQuery와 같은 라이브러리의 경우, 코드를 즉시 실행함수 내에 정의해두면 라이브러리의 변수들이 독립된 영역 내에 있게 되므로 여러 라이브러리들은 동시에 사용되더라도 변수명 충돌과 같은 문제를 방지할 수 있다.
+>
+> 사용 예시는 다음과 같다.
+
+```javascript
+(function() {
+    var foo = 1;
+    console.log(foo);
+}());
+
+var foo = 100;
+console.log(foo);
+
+// 각각 1, 100이 출력된다.
+```
+
+
+
+
+
+##### 내부 함수 (Inner Function)
+
+> 함수 내부에 정의된 함수를 내부 함수 또는 자식함수라고 한다.
+>
+> 내부 함수는 자신을 포함한 부모 함수의 변수에 접근하는 것이 가능하다. 그러나 부모함수는 내부함수의 변수에 접근할 수 없다.
+
+```javascript
+function parent(param) {
+    var parentVar = param;
+    function child() {
+        var childVar = 'lee';
+        console.log(parentVar + ' ' + childVar);
+        // Hello lee 출력
+    }
+    child();
+    console.log(parentVar + ' ' + childVar);
+    // Uncaught ReferenceError: childVar is not defined
+}
+parent('Hello');
+```
+
+> 부모함수의 외부에서는 내부함수에 접근하는 것 조차 불가능하다.
+
+```javascript
+function sayHello(name) {
+    var text = 'Hello' + name;
+    var logHello = function(){ console.log(text); }
+    logHello();
+}
+
+sayHello('lee'); // Hellolee 출력
+logHello('lee'); // logHello is not defined
+```
+
+
+
+
+
+##### 재귀 함수 (Recursive Function)
+
+> 재귀 함수는 자기 자신을 호출하는 함수를 말한다. 대표적인 예로 피보나치 혹은 팩토리얼 함수 등이 있다.
+>
+> 팩토리얼 함수의 예시를 보자.
+
+```javascript
+// 팩토리얼 : 1부터 자신까지의 모든 양의 정수의 곱이다.
+// n! = 1 * 2 * ... * (n-1) * n
+
+function factorial(n) {
+    if (n < 2) return 1;
+    return factorial(n-1) * n;
+}
+```
+
+> 재귀 함수를 정의할 때 유의할 점은 자신을 무한히 연쇄 호출하므로 호출을 멈출 수 있는 탈출 조건을 반드시 만들어야 한다는 점이다. 탈출 조건이 없는 경우, 함수가 무한 호출되어 stackoverflow 에러가 발생한다. 
+>
+> 무한 반복 또는 무한 호출이 단점이라면, 재귀 호출은 반복 연산을 직관적이고 쉽게 구현할 수 있다는 장점이 있다. 그런데 대부분의 재귀 함수는 for나 while을 사용한 반복문의 형태로 구현이 가능하다. 재귀 호출을 사용한 구현이 더 직관적이며 이해하기 쉽지만 성능 면에서는 반복문의 형태로 구현하는 것이 좋다.
+
+
+
+
+
+##### 콜백 함수 (Callback Function)
+
+> 콜백 함수란 함수를 명시적으로 호출하는 방식이 아니라 특정 이벤트가 발생했을 때 시스템에 의해 호출되는 함수를 말한다.
+>
+> 콜백 함수가 자주 사용되는 대표적인 예는 이벤트 핸들러 처리이다.
+
+```html
+<body>
+    <button id="myButton">
+         Click Me
+    </button>
+    <script>
+        var button = document.getElementById('myButton')
+        button.addEventListener('click', function() {
+            console.log('button clicked!')
+        })
+    </script>
+</body>
+```
+
+> 자바스크립트의 함수는 일급 객체이다. 따라서 자바스크립트의 함수는 흡사 변수와 같이 사용될 수 있다. 콜백함수는 매개변수를 통해 전달되고 전달받은 함수 내부의 어느 특정시점에서 실행된다.
+>
+> 대표적으로 콜백 함수의 예시에 사용되는 setTimeout을 사용한 예를 살펴보면 다음과 같다.
+
+```javascript
+function myFunc(text) {
+    console.log(text);
+}
+
+function doSomething(func, params) {
+    setTimeout(function() {
+        func(params);
+    }, 3000);
+}
+
+doSomething(myFunc, 'Lee');
+// 3초 뒤에 Lee가 출력된다.
+```
+
