@@ -25,3 +25,4 @@
 * CORS 이슈
 * 자바스크립트 프로토타입, ES6 클래스
 * MSA (자세한 부분, Circuit Breaker 등)
+* Class Field Declarations Proposal (ES6 class)
