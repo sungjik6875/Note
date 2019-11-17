@@ -20,9 +20,8 @@
 * DFS, BFS
 * 이진탐색, 백트래킹
 * 연결 리스트
-* Sass
 * PWA
 * CORS 이슈
-* 자바스크립트 프로토타입, ES6 클래스
 * MSA (자세한 부분, Circuit Breaker 등)
-* Class Field Declarations Proposal (ES6 class)
+* Class Field Declarations Proposal (ES6 - Class)
+* Strict Mode (JS - Strict Mode)
