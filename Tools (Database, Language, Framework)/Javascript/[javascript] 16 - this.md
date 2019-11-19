@@ -477,4 +477,179 @@ console.log(b.value); 	// 10
 
 ------
 
-(작성 예정 ...)
+> this에 바인딩될 객체는 함수 호출 패턴에 의해 결정된다. 이는 자바스크립트 엔진이 수행하는 것이다. 이러한 자바스크립트 엔진의 암묵적 this 바인딩 이외에 this를 특정 객체에 명시적으로 바인딩하는 방법도 제공된다.
+>
+> 이러한 방법을 지원하는 것이 `Function.prototype.apply, Function.prototype.call` 메소드이다. 이 메소드들은 모든 함수 객체의 프로토타입 객체인 Function.prototype 객체의 메소드이다.
+
+
+
+##### Function.prototype.apply()
+
+> 그중 apply의 사용 형식은 다음과 같다.
+
+```javascript
+func.apply(thisArg, [argsArray])
+// thisArg: 함수 내부의 this에 바인딩할 객체
+// argsArray: 함수에 전달할 argument의 배열
+```
+
+> 이 때 기억해야 할 것은 apply() 메소드를 호출하는 주체는 함수이며 apply() 메소드는 this를 특정 객체에 바인딩할 뿐, 본질적인 기능은 함수 호출이라는 것이다. 예시는 다음과 같다.
+
+
+
+> ##### Function.prototype.apply의 예시
+
+```javascript
+var Person = function(name) {
+    this.name = name;
+};
+
+var foo = {};
+
+// apply 메소드는 생성자함수 Person을 호출한다. 이때 this에 객체 foo를 바인딩한다.
+Person.apply(foo, ['name']);
+
+console.log(foo); // { name: 'name' }
+```
+
+> 빈 객체 foo를 apply() 메소드 첫번째 매개변수에, argument의 배열을 두번째 매개변수에 전달하면서 Person 함수를 호출하였다. 이때 Person 함수의 this는 foo 객체가 된다. Person 함수는 this의 name 프로퍼티에 매개변수 name에 할당된 인수를 할당하는데 this에 바인딩된 foo 객체에는 name 프로퍼티가 없으므로 name 프로퍼티가 동적 추가되고 값이 할당된다.
+
+
+
+> ##### Function.prototype.apply의 활용
+>
+> apply() 메소드의 대표적인 용도는 arguments 객체와 같은 유사 배열 객체에 배열 메소드를 사용하는 경우이다. arguments 객체는 배열이 아니기 대문에 slice() 같은 배열의 메소드를 사용할 수 없으나 apply() 메소드를 이용하면 가능하다.
+>
+> 예시는 다음과 같다.
+
+```javascript
+function convertArgsToArray() {
+    console.log(arguments);
+    
+    // arguments 객체를 배열로 변환
+    // slice: 배열의 특정 부분에 대한 복사본 생성
+    var arr = Array.prototype.slice.apply(arguments);
+    // arguments.slice
+    // var arr = [].slice.apply(arguments);
+    
+    console.log(arr); // [1, 2, 3]
+    return arr;
+}
+
+convertArgsToArray(1, 2, 3);
+```
+
+> 이에 대한 설명은 다음과 같다.
+>
+> `Array.prototype.slice.apply(arguments)`는 Array.prototype 객체의 slice() 메소드를 호출하되, slice 메소드 내부의 this를 arguments 객체로 바인딩하라는 의미가 된다. 결국 Array.prototype.slice() 메소드를 arguments 객체 자신의 메소드인 것처럼 arguments.slice()와 같은 형태로 호출하라는 것이다.
+>
+> 이를 이미지로 표현하면 다음과 같다.
+
+![example_5](./image/js_16_5.png)
+
+
+
+##### Function.prototype.call()
+
+> call() 메소드의 경우, apply()와 기능은 같지만 apply()의 두번째 인자에서 배열 형태로 넘긴 것을 각각 하나의 인자로 넘긴다.
+>
+> apply()와 비교한 call()의 사용 형식의 예는 다음과 같다.
+
+```javascript
+Person.apply(foo, [1, 2, 3]);
+Person.call(foo, 1, 2, 3);
+```
+
+
+
+> ##### Function.prototype.call의 활용
+>
+> apply()와 call() 메소드는 콜백 함수의 this를 위해서 사용되기도 한다.
+
+```javascript
+// 생성자 함수 정의
+function Person(name) {
+    this.name = name;
+}
+
+// 프로토타입 객체에 메소드 추가
+Person.prototype.doSomething = function(callback) {
+    if(typeof callback == 'function') {
+        callback()
+    }
+}
+
+// callback 함수의 정의
+function foo() {
+    console.log(this.name);
+}
+
+// 생성자 함수를 통한 객체 생성 및 프로토타입 객체의 메소드 호출
+var lee = new Person('Lee');
+lee.doSomethig(foo); 	// undefined
+```
+
+> 위 구문이 실행될 때 this가 어디에 바인딩 될 지 살펴보자. 먼저 생성자 함수와 프로토타입 객체의 메소드, callback 함수가 정의된다. 정의 단계에서는 this가 어디에 바인딩 될 지 알 수 없다. this는 함수 호출 방식에 따라 동적으로 바인딩된다고 앞서 설명했었다.
+>
+> lee 객체를 Person 생성자 함수를 통해 생성될 때 this는 생성자 함수를 통한 호출에 의해 새로 생성되는 lee 객체에 바인딩된다. 따라서 lee 객체에 name 프로퍼티가 동적으로 추가된다. 
+>
+> lee.doSomething에서는 어떨까? foo 함수가 프로토타입 객체의 메소드의 인자이자 내부 함수로써 전달된다. 메소드의 내부함수에서 사용되는 this는 전역 객체를 가리킨다. 따라서 foo 함수의 this.name의 this는 전역 객체를 가리키는데 전역 객체에는 name 프로퍼티가 없으므로 undefined가 출력된다.
+>
+> 이제 왜 undefined가 출력되는지 원인을 알았다. 개발자는 아마도 콘솔에 lee 객체의 name 프로퍼티의 값인 'Lee'가 출력되도록 의도했을 것이다. 개발자의 의도대로 동작하게 하려면 콜백함수의 this가 자신을 호출한 객체 lee에 바인딩되어야 할 것이다. 이 때 사용할 수 있는 것이 call()이다.
+>
+> 다음의 예시를 보자.
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.doSomething = function (callback) {
+  if (typeof callback == 'function') {
+    // 변화된 부분. call의 인자 this는 메소드를 호출한 객체이다.
+    callback.call(this);
+  }
+};
+
+function foo() {
+  console.log(this.name);
+}
+
+var lee = new Person('Lee');
+lee.doSomething(foo);  // 'Lee'
+```
+
+> 위에서 변화된 부분을 보자. callback에 this에 바인딩할 객체로 this를 전달한 것을 확인할 수 있다. 전달인자로 사용된 this가 바인딩하는 객체는 무엇일까? 이에 답하기 위해 doSomething이 어떻게 호출되는지 알아야 한다. doSomething은 객체의 메소드로 동작하므로 메소드 호출에 의해 this가 메소드를 호출하는 객체에 바인딩된다. 즉, doSomething을 호출하는 객체인 lee에 this가 바인딩됨을 알 수 있다. call()에 의해 lee객체가 callback 함수의 this에도 바인딩되면서 의도했던 출력 결과인 'Lee'가 출력됨을 알 수 있다.
+
+
+
+##### Function.prototype.bind()
+
+> bind()는 ES5에서 추가된 기능으로 이를 사용하여 this를 명시적으로 바인딩하는 것이 가능하다. bind() 메소드는 메소드의 인자를 함수의 this에 바인딩시킨 새로운 함수를 반환한다. apply()나 call()은 사용과 동시에 대상이 되는 함수를 실행시키는 반면, bind()는 대상이 될 함수를 반환하기 때문에 해당 함수가 실행되지 않는다. 따라서 실행시키려면 명시적으로 함수를 호출해야 한다.
+>
+> bind()의 활용 예시는 다음과 같다.
+
+> ##### Function.prototype.bind의 활용
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.doSomething = function(callback) {
+  if (typeof callback == 'function') {
+    // this가 바인딩된 새로운 함수가 반환되고, 이를 즉시 실행시킨다.
+    callback.bind(this)();
+  }
+};
+
+function foo() {
+  console.log(this.name);
+}
+
+var lee = new Person('Lee');
+lee.doSomething(foo);  // 'Lee'
+```
+
+> call()을 활용한 예시와 다르게 뒤에 ()가 추가된 것을 확인할 수 있다. 이는 function.bind(this)를 통해 function의 this가 인자로 전달된 this를 바인딩하는 새로운 함수가 반환되었기 때문이다.
+
