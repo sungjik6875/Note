@@ -25,4 +25,4 @@
 * MSA (자세한 부분, Circuit Breaker 등)
 * Class Field Declarations Proposal (ES6 - Class)
 * Strict Mode (JS - Strict Mode)
-* apply / call / bind (JS - this)
+* let, const 부분의 closure (ES6 - let, const)
