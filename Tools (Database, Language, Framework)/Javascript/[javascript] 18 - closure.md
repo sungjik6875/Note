@@ -291,6 +291,7 @@ function decrease(n) {
 // 함수로 함수를 생성한다.
 // makeCounter 함수는 보조 함수를 인자로 전달받아 함수를 반환한다
 const increaser = makeCounter(increase);
+// increaser : function() { counter = increase(counter); return counter; };
 console.log(increaser()); // 1
 console.log(increaser()); // 2
 
@@ -298,5 +299,115 @@ console.log(increaser()); // 2
 const decreaser = makeCounter(decrease);
 console.log(decreaser()); // -1
 console.log(decreaser()); // -2
+```
+
+
+
+##### 정보의 은닉
+
+> 이번에는 생성자 함수 Counter를 생성하고 이를 통해 counter 객체를 만들어보자.
+
+```javascript
+function() Counter() {
+    // 카운트를 유지하기 위한 자유 변수
+    var counter = 0;
+    
+    // 클로저
+    this.increase = function() {
+        return ++counter;
+    };
+    this.decrease = function() {
+        return --counter;
+    };
+}
+
+const counter = new Counter();
+
+console.log(counter.increase()); 	// 1
+console.log(counter.decrease());	// 0
+```
+
+> 생성자 함수 Counter는 increase, decrease 메소드를 갖는 인스턴스를 생성한다. 이 메소드들은 모두 자신이 생성되었을 때의 렉시컬 환경인 생성자 함수 Counter의 스코프에 속한 변수 counter를 기억하는 클로저이다. 또한 동일 인스턴스의 메소드이므로 렉시컬 환경을 공유한다. 생성자 함수가 함수가 생성한 객체의 메소드는 객체의 프로퍼티에만 접근할 수 있는 것이 아니며 자신이 기억하는 렉시컬 환경의 변수에도 접근할 수 있다.
+>
+> 이 때 생성자 함수 Counter의 변수 counter는 this에 바인딩된 프로퍼티가 아니라 변수이다. counter가 this에 바인딩된 프로퍼티라면 생성자 함수 Counter가 생성한 인스턴스를 통해 외부에서 접근이 가능한 public 프로퍼티가 되지만 생성자 함수 Counter 내에서 선언된 변수 counter는 생성자 함수 Counter 외부에서 접근할 수 없다. 그러나 생성자 함수 Counter가 생성한 인스턴스의 메소드인 increase, decrease는 클로저이기 때문에 자신이 생성되었을 때의 렉시컬 환경인 생성자 함수 Counter의 변수 counter에 접근할 수 있다. 이러한 클로저의 특징을 사용해 클래스 기반 언어의 private 키워드를 흉내낼 수 있다.
+
+
+
+##### 자주 발생하는 실수
+
+> 다음의 예시는 클로저를 사용할 때 자주 발생할 수 있는 실수에 관련한 예제다.
+
+```javascript
+var arr = [];
+
+for (var i = 0; i < 5; i++) {
+    arr[i] = function() {
+        return i;
+    };
+}
+// 배열 arr에 5개의 함수가 할당된다.
+
+for (var j = 0; j < arr.length; j++) {
+    console.log(arr[j]());
+}
+
+// 5가 5번 출력된다.
+```
+
+> 위의 예시에서는 배열 arr에 5개의 함수가 할당되고 각 함수는 순차적으로 0, 1, 2, 3, 4를 반환할 것으로 기대하겠지만 결과는 그렇지않다. 결과로 5가 5번 출력된다.
+>
+> 이렇게 되는 이유는 for 문에서 사용한 변수 i가 전역변수이기 대문이다. 이러한 문제를 클로저를 사용하여 바르게 동작하도록 할 수 있다.
+>
+> 클로저를 활용한 코드는 다음과 같다.
+
+```javascript
+var arr = [];
+
+for (var i = 0; i < 5; i++) {
+    arr[i] = (function(id) {
+        return function() {
+            return id;
+        }
+    }(i));
+    // arr[i] : function() { return id; }
+}
+
+for (var j = 0; j < arr.length; j++) {
+   console.log(arr[j]());
+   // arr[j]() : j(j === i, id)
+}
+```
+
+> 위 코드의 동작 방식은 다음과 같다.
+
+* 먼저 배열 arr에는 즉시 실행함수에 의해 함수가 반환된다.
+* 이때 즉시실행함수는 i를 인자로 전달받고 매개변수에 id를 할당한 후 내부 함수를 반환하고 life-cycle이 종료된다. 매개변수 id는 자유변수가 된다.
+* 배열 arr에 할당된 함수는 id를 반환한다. 이때 id는 상위 스코프의 자유변수이므로 즉시실행함수가 종료되어도 그 값이 유지된다.
+
+> var 키워드로 선언된 변수는 함수 레벨 스코프에 의해 제한된다. 따라서 for 문 안에서 선언된 var는 전역 변수로 선언되었으며, 이로 인해 문제가 발생하여 클로저를 활용한 것이다. ES6에서는 클로저를 활용하는 대신, 블록레벨 스코프로 제한되는 let 키워드를 활용하여도 된다.
+>
+> let을 활용한 코드는 다음과 같다.
+
+```javascript
+const arr = [];
+
+for (let i = 0; i < 5; i++) {
+  arr[i] = function () {
+    return i;
+  };
+}
+
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i]());
+}
+```
+
+> 또는 함수형 프로그래밍 기법인 고차함수를 사용하는 방법도 있다. 이 방법은 변수와 반복문의 사용을 억제할 수 있기 때문에 애플리케이션의 오류를 줄이고 가독성을 좋게 만든다.
+
+```javascript
+const arr = new Array(5).fill();
+
+arr.forEach((v, i, array) => array[i] = () => i);
+arr.forEach(f => console.log(f()));
 ```
 
