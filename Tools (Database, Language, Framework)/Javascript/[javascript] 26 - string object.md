@@ -240,5 +240,64 @@ if (str.includes('Hello')) {
 
 
 
-##### String.prototype.lastIndexOf
+##### String.prototype.replace()
 
+> 첫 번째 인수로 전달한 문자열 또는 정규표현식을 대상 문자열에서 검색하여 두 번째 인수로 전달한 문자열로 대체한다. 검색된 문자열이 여럿 존재하는 경우 첫 번째로 검색된 문자열만 대체된다. 원본 문자열은 변경되지 않고 결과가 반영된 새로운 문자열을 반환한다.
+>
+> 사용 형식은 다음과 같다.
+
+```javascript
+str.replace(serachValue, replacer)
+```
+
+> searchValue는 대상 문자열에서 대체되어야 할 값으로 문자열 또는 정규표현식으로 지정한다. replacer는 치환할 값으로 문자열이나 정규표현식, 혹은 함수로 지정된다.
+>
+> 사용 예시는 다음과 같다.
+
+```javascript
+const str = 'Hello world';
+
+// 첫번째로 검색된 문자열만 대체하여 새로운 문자열을 반환한다.
+console.log(str.replace('world', 'Lee')); // Hello Lee
+
+// 특수한 교체 패턴을 사용할 수 있다. ($& => 검색된 문자열)
+console.log(str.replace('world', '<strong>$&</strong>')); // Hello <strong>world</strong>
+
+/* 정규표현식
+g(Global): 문자열 내의 모든 패턴을 검색한다.
+i(Ignore case): 대소문자를 구별하지 않고 검색한다.
+*/
+console.log(str.replace(/hello/gi, 'Lee')); // Lee Lee
+
+// 두번째 인수로 치환 함수를 전달할 수 있다.
+// camelCase => snake_case
+const camelCase = 'helloWorld';
+
+// /.[A-Z]/g => 1문자와 대문자의 조합을 문자열 전체에서 검색한다.
+console.log(camelCase.replace(/.[A-Z]/g, function (match) {
+  // match : oW => match[0] : o, match[1] : W
+  return match[0] + '_' + match[1].toLowerCase();
+})); // hello_world
+
+// /(.)([A-Z])/g => 1문자와 대문자의 조합
+// $1 => (.)
+// $2 => ([A-Z])
+console.log(camelCase.replace(/(.)([A-Z])/g, '$1_$2').toLowerCase()); // hello_world
+
+// snake_case => camelCase
+const snakeCase = 'hello_world';
+
+// /_./g => _와 1문자의 조합을 문자열 전체에서 검색한다.
+console.log(snakeCase.replace(/_./g, function (match) {
+  // match : _w => match[1] : w
+  return match[1].toUpperCase();
+})); // helloWorld
+```
+
+
+
+##### String.prototype.split()
+
+> 첫 번째 인수로 전달한 문자열 또는 정규표현식을 대상 문자열에서 검색하여 문자열 분할의 기준으로 사용한다. 이후 문자열을 기준에 따라 분리한 후, 분리된 각 문자열을 배열로 반환한다. 만약 분할의 기준이 될 인수를 설정하지 않으면 대상 문자열 전체를 단일 요소로 하는 배열을 반환한다. 원본 문자열은 변경되지 않는다.
+>
+> 사용 형식은 다음과 같다.
