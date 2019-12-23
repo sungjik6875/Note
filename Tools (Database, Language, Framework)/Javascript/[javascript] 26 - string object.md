@@ -366,9 +366,100 @@ console.log(str.substring(20)); // ''
 
 ##### String.prototype.slice()
 
-> String.prototype.substring과 유사하게 동작한다. 다만 slice()는 음수를 인수로 전달할 수 있다. 음수를 전달할 경우 String의 뒤에서부터 인덱스를 시작한다.
+> String.prototype.substring과 유사하게 동작한다. 다만 slice()는 음수를 인수로 전달할 수 있다(0으로 처리되지 않는다). 음수를 전달할 경우 String의 뒤에서부터 인덱스를 시작한다.
 
 ```javascript
+var str = 'hello world';
 
+// 뒤에서부터 5자리를 잘라내어 반환한다.
+console.log(str.slice(-5));			// 'world'
+
+// 두 번째부터 마지막 문자까지 잘라내어 반환한다.
+console.log(str.slice(2));			// llo world
+
+// 0번째부터 5번째 이전 문자까지 잘라내어 반환한다.
+console.log(str.slice(0, 5));		// hello
+
+// 1번째부터 -1번째 이전 문자까지 잘라내어 반환한다.
+console.log(str.slice(1, -1));	// ello worl 
+```
+
+
+
+##### String.prototype.toLowerCase()
+
+> 대상 문자열의 모든 문자를 소문자로 변경한다.
+
+```javascript
+console.log('Hello World!'.toLowerCase()); // hello world!
+```
+
+
+
+##### String.prototype.toUpperCase()
+
+> 대상 문자열의 모든 문자를 대문자로 변경한다.
+
+```javascript
+console.log('Hello World!'.toUpperCase()); // HELLO WORLD!
+```
+
+
+
+##### String.prototype.trim()
+
+> 대상 문자열 양쪽 끝에 있는 공백 문자를 제거한 문자열을 반환한다.
+
+```javascript
+const str = '   foo  ';
+
+console.log(str.trim()); // 'foo'
+
+// 시작 또는 끝의 공백만 선택적으로 제거하고 싶은 경우는 다음과 같은 메소드를 사용한다.
+console.log(str.trimStart()); // 'foo  '
+console.log(str.trimEnd());   // '   foo'
+
+// String.prototype.replace()를 활용하여도 된다.
+console.log(str.replace(/\s/g, ''));   // 'foo'
+console.log(str.replace(/^\s+/g, '')); // 'foo  '
+console.log(str.replace(/\s+$/g, '')); // '   foo'
+```
+
+
+
+##### String.prototype.repeat(n)
+
+> 대상 문자열을 인수로 전달한 숫자만큼 반복하여 연결한 새로운 문자열을 반환한다. count가 0이면 빈 문자열을 반환하고 음수이면 RangeError를 발생시킨다.
+>
+> 사용 예시는 다음과 같다.
+
+```javascript
+console.log('abc'.repeat(0));   // ''
+console.log('abc'.repeat(1));   // 'abc'
+console.log('abc'.repeat(2));   // 'abcabc'
+console.log('abc'.repeat(2.5)); // 'abcabc' (2.5 → 2)
+console.log('abc'.repeat(-1));  // RangeError: Invalid count value
+```
+
+
+
+##### String.prototype.includes()
+
+> 인수로 전달한 문자열이 포함되어 있는지를 검사하고 결과를 불리언 값으로 반환한다. 두 번째 인수는 옵션으로 검색할 위치를 나타내는 정수이다.
+
+```javascript
+const str = 'hello world';
+
+// true
+console.log(str.includes('hello'));
+console.log(str.includes(' ')); 
+console.log(str.includes('wo'));
+console.log(str.includes('h'));
+console.log(str.includes(''));
+
+// false
+console.log(str.includes('wow'));
+console.log(str.includes());
+console.log(str.includes('h', 2));
 ```
 
