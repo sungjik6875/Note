@@ -301,3 +301,74 @@ console.log(snakeCase.replace(/_./g, function (match) {
 > 첫 번째 인수로 전달한 문자열 또는 정규표현식을 대상 문자열에서 검색하여 문자열 분할의 기준으로 사용한다. 이후 문자열을 기준에 따라 분리한 후, 분리된 각 문자열을 배열로 반환한다. 만약 분할의 기준이 될 인수를 설정하지 않으면 대상 문자열 전체를 단일 요소로 하는 배열을 반환한다. 원본 문자열은 변경되지 않는다.
 >
 > 사용 형식은 다음과 같다.
+
+```javascript
+str.split([separator[, limit]])
+```
+
+```javascript
+const str = 'How are you doing?';
+
+console.log(str.split(' '));
+console.log(str.split(/\s/));
+// [ 'How', 'are', 'you', 'doing?' ]
+
+console.log(str.split());
+// [ 'How are you doing?' ]
+
+console.log(str.split(''));
+// [ 'H','o','w',' ','a','r','e',' ','y','o','u',' ','d','o','i','n','g','?' ]
+
+console.log(str.split(' ', 3));
+// [ 'How', 'are', 'you' ]
+```
+
+
+
+##### String.prototype.substring()
+
+> 첫 번째 인수로 전달한 start 인덱스에 해당하는 문자부터 두번째 인자에 전달된 end 인덱스에 해당하는 문자의 바로 이전 문자까지를 모두 반환한다. 이 때 첫번째 인수 < 두번째 인수의 관계가 성립된다. 이 때 첫 번째 인수와 두 번째 인수를 설정하는 경우는 여러 가지가 있는데, 그 경우에 대해서 다음과 같이 동작한다.
+
+* 첫 번째 인수 > 두 번째 인수 : 두 인수는 교환된다.
+* 두 번째 인수가 생략된 경우 : 해당 문자열의 끝까지 반환한다.
+* 인수 < 0 또는 NaN인경우 : 0으로 취급된다.
+* 인수 > 문자열의 길이 (str.length) : 인수는 문자열의 길이로 취급된다.
+
+> 사용 형식은 다음과 같다.
+
+```javascript
+str.substring(start[, end]);
+```
+
+> 사용 예시는 다음과 같다.
+
+```javascript
+const str = "Hello World";
+
+console.log(str.substring(1, 4)); // ell
+
+// 첫번째 인수 > 두번째 인수 : 두 인수는 교환된다.
+console.log(str.substring(4, 1)); // ell
+
+// 두번째 인수가 생략된 경우 : 해당 문자열의 끝까지 반환한다.
+console.log(str.substring(4)); // o World
+
+// 인수 < 0 또는 NaN인 경우 : 0으로 취급된다.
+console.log(str.substring(-2)); // Hello World
+
+// 인수 > 문자열의 길이(str.length) : 인수는 문자열의 길이(str.length)으로 취급된다.
+console.log(str.substring(1, 12)); // ello World
+console.log(str.substring(11)); // ''
+console.log(str.substring(20)); // ''
+```
+
+
+
+##### String.prototype.slice()
+
+> String.prototype.substring과 유사하게 동작한다. 다만 slice()는 음수를 인수로 전달할 수 있다. 음수를 전달할 경우 String의 뒤에서부터 인덱스를 시작한다.
+
+```javascript
+
+```
+
