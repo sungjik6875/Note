@@ -231,10 +231,10 @@ for (var key in arr) { console.log(arr[key]); }
 
 ##### Array.length
 
-> length 프로퍼티는 요소의 개수(배열의 길이)를 나타낸다. 배열 인덱스는 32bit 양의 정수로 처리된다. 따라서 length 프로퍼티의 값은 양의 정수이며 `2^32-1` 미만이다.
+> length **프로퍼티**는 요소의 개수(배열의 길이)를 나타낸다. 배열 인덱스는 32bit 양의 정수로 처리된다. 따라서 length 프로퍼티의 값은 양의 정수이며 `2^32-1` 미만이다.
 
-```javascript
-var arr =. [1, 2, 3, 4, 5];
+```
+var arr = [1, 2, 3, 4, 5];
 console.log(arr.length);	// 5
 ```
 
@@ -248,4 +248,89 @@ console.log(arr);						// [empty × 5, 1]
 console.log(arr.length);		// 6
 ```
 
-> 예시처럼 배열 요소의 개수와 length 프로퍼티의 값이 일치하지 않는 배열을 **희소 배열(sparce array)**이라 한다. 희소 배열은 배열의 요소가 연속적이지 않은 배열을 의미한다. 희소 배열이 아닌 일반 배열은 배열의 요소 개수와 length 프로퍼티의 값이 언제나 일치하지만 희소 배열은 배열의 요소 개수보다 length 프로퍼티의 값이 언제나 크다.
+> 예시처럼 배열 요소의 개수와 length 프로퍼티의 값이 일치하지 않는 배열을 **희소 배열(sparce array)**이라 한다. 희소 배열은 배열의 요소가 연속적이지 않은 배열을 의미한다. 희소 배열이 아닌 일반 배열은 배열의 요소 개수와 length 프로퍼티의 값이 언제나 일치하지만 희소 배열은 배열의 요소 개수보다 length 프로퍼티의 값이 언제나 크다. 이러한 이유로 희소배열은 일반 배열보다 느리며 메모리를 낭비한다.
+>
+> 현재 length 프로퍼티 값보다 더 큰 인덱스로 요소를 추가하면 자동으로 length 프로퍼티의 값이 늘어난다. 이 때 length 프로퍼티의 값은 요소의 인덱스 중 가장 큰 값에 1을 더한 값이다.
+
+```javascript
+var arr = [1, 2, 3, 4, 5];
+arr.length = 3;
+console.log(arr);
+// [1, 2, 3]
+```
+
+> length 프로퍼티의 값은 명시적으로 변경 가능하다. 만약 length 프로퍼티의 값을 현재보다 작게 변경하면 변경된 length 프로퍼티의 값보다 크거나 같은 인덱스에 해당하는 요소는 모두 삭제된다.
+
+
+
+
+
+#### 배열 메소드
+
+------
+
+> this에 해당하는 원본 배열을 변경하는 메소드와 변경하지 않는 메소드가 있다.
+
+
+
+##### Array.isArray()
+
+> 객체가 배열이면 true, 아니면 false를 반환한다.
+
+```javascript
+// true
+Array.isArray([]);
+Array.isArray([1, 2]);
+Array.isArray(new Array());
+```
+
+```javascript
+// false
+Array.isArray();
+Array.isArray({});
+Array.isArray(null);
+Array.isArray(undefined);
+Array.isArray(1);
+Array.isArray('Array');
+Array.isArray(true);
+Array.isArray(false);
+```
+
+
+
+##### Array.from()
+
+> 이터러블 객체를 배열로 변환하여 반환한다. 사용 형식은 다음과 같다.
+
+```javascript
+Array.from(arrayLike[, mapFn[, thisArg]])
+```
+
+> 사용 예시는 다음과 같다.
+
+```javascript
+console.log(Array.from('hello')); // [ 'h', 'e', 'l', 'l', 'o' ]
+console.log(Array.from([1, 2, 3], x => x + x)); // [ 2, 4, 6 ]
+```
+
+```javascript
+(function() {
+	console.log(Array.from(arguments));		// [1, 2, 3]
+  console.log([... arguments]);					// [1, 2, 3]
+}(1, 2, 3));
+```
+
+
+
+##### Array.of()
+
+> 주어진 인수로 새로운 배열을 생성하여 반환한다. 사용 형식은 다음과 같다.
+
+```javascript
+Array.of(elem1, elem2, ...)
+```
+
+> 사용 예시는 다음과 같다.
+
+
+
