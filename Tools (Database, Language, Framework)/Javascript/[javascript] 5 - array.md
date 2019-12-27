@@ -332,5 +332,90 @@ Array.of(elem1, elem2, ...)
 
 > 사용 예시는 다음과 같다.
 
+```javascript
+Array.of(1);
+Array.of(1, 2, 3);
+```
 
 
+
+##### Array.prototype.indexOf()
+
+> indexOf 메소드의 인자로 지정된 요소를 배열에서 검새갛여 인덱스를 반환한다. 중복되는. 요소가 있는 경우 첫번째 인덱스만 반환한다. 해당하는 요소가 없는 경우 -1을 반환한다.
+
+```javascript
+var arr = [1, 2, 3, 4];
+console.log(arr.indexOf(2));		// 1
+console.log(arr.indexOf(4));		// 3
+console.log(arr.indexOf(5)); 		// -1
+console.log(arr.indexOf(2, 2));	// -1, 2번 인덱스 부터 탐색을 시작.
+```
+
+> 다음과 같이 특정 요소가 존재하는지 확인하는 용도로 사용할 수 있다.
+
+```javascript
+var foods = ['apple', 'banana', 'orange'];
+
+// foods 배열에 'apple' 요소가 존재하는지 확인
+if (foods.indexOf('apple') !== -1) {
+	// foods 배열에 'apple'이 포함되어 있는 경우의 처리
+}
+```
+
+> ES7 부터는 includes 메소드를 대신 사용해도 된다.
+
+```javascript
+// ES7: Array.prototype.includes
+if (foods.includes('apple')) {
+  // foods 배열에 'apple'이 포함되어 있는 경우의 처리
+}
+```
+
+
+
+##### Array.prototype.concat()
+
+> concat 메소드의 인수로 넘어온 값들을 자신의 복사본에 요소로 추가하고 반환한다. 이때 원본 배열은 변경되지 않는다.
+
+```javascript
+var a = ['a', 'b', 'c'];
+var b = ['x', 'y', 'z'];
+
+/* 배열과 배열의 연결 */
+var c = a.concat(b);
+console.log(c); // ['a', 'b', 'c', 'x', 'y', 'z']
+
+/* 문자열과의 연결 */
+var d = a.concat('String');
+console.log(d); // ['a', 'b', 'c', 'String']
+
+/* 둘 이상의 요소와 연결 */
+var e = a.concat(b, true);
+console.log(e); // ['a', 'b', 'c', 'x', 'y', 'z', true]
+
+/* 원본 배열은 변하지 않는다 */
+console.log(a); // [ 'a', 'b', 'c' ]
+```
+
+
+
+##### Array.prototype.join()
+
+> 배열 요소 전체를 연결하여 생성한 문자열을 반환한다. 구분자는 생략 가능하며 기본 구분자는 `,`이다. Array.prototype.join() 메소드는 `+` 연산자보다 빠르다.
+
+```javascript
+var arr = ['a', 'b', 'c', 'd'];
+
+var x = arr.join();
+console.log(x);  // 'a,b,c,d';
+
+var y = arr.join('');
+console.log(y);  // 'abcd'
+
+var z = arr.join(':');
+console.log(z);  // 'a:b:c:d'
+```
+
+
+
+##### Array.prototype.pop()
