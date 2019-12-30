@@ -10,7 +10,30 @@
 function makeCounter(func) {
   let num = 0;
   
-  return func
+  return function () {
+    num = func(num);
+    return num
+  };
 }
+```
+
+```javascript
+function increase(n) {
+  return ++n;
+}
+
+function decrease(n) {
+  return --n;
+}
+```
+
+```javascript
+const increaser = makeCounter(increase);
+console.log(increaser());
+console.log(increaser());
+
+const decreaser = makeCounter(decrease);
+console.log(decreaser());
+console.log(decreaser());
 ```
 
