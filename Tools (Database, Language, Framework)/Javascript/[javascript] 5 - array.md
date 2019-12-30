@@ -418,4 +418,287 @@ console.log(z);  // 'a:b:c:d'
 
 
 
-##### Array.prototype.pop()
+##### Array.prototype.pop() / Array.prototype.shift()
+
+> **Array.prototype.pop** 메소드는 배열에서 마지막 요소를 제거하고 제거한 요소를 반환한다. 만약 빈 배열일 경우 `undefined` 를 반환한다. pop 메소드는 대상 배열 자체를 변경한다.
+
+```javascript
+var a = ['a', 'b', 'c'];
+var c = a.pop();
+
+// 원본 배열이 변경된다.
+console.log(a); // a --> ['a', 'b']
+console.log(c); // c --> 'c'
+```
+
+> **Array.prototype.shift** 메소드는 배열의 선두 요소를 제거하고 제거한 요소를 반환한다. 만약 빈 배열일 경우 `undefined` 를 반환한다. shift 메소드도 대상 배열을 변경한다.
+
+```javascript
+var a = ['a', 'b', 'c'];
+var c = a.shift();
+
+// 원본 배열이 변경된다.
+console.log(a); // a --> [ 'b', 'c' ]
+console.log(c); // c --> 'a'
+```
+
+
+
+
+
+##### Array.prototype.push() / Array.prototype.unshift()
+
+> **Array.prototype.push** 메소드는  인자를 배열의 마지막 요소로 추가한다. 갱신된 배열의 length 값을 반환한다. push 메소드 역시 대상 배열 자체를 변경한다.
+
+```javascript
+var a = ['a', 'b', 'c'];
+
+// push는 원본 배열을 직접 변경하고 변경된 배열의 length를 반환한다.
+var d = a.push('d');
+
+console.log(a);		// ['a', 'b', 'c', 'd']
+console.log(d);		// 4
+```
+
+> 배열의 선두에 값을 추가하고자 할 경우에는 **Array.prototype.unshift** 메소드를 사용하면 된다.
+>
+> push, unshift 메소드는 사용하기 간편하다. 그러나 성능 면에서는 좋은 방법은 아니다.
+
+```javascript
+var arr = [1, 2, 3, 4, 5];
+
+arr.push(6);
+arr[arr.length] = 6; // 43% faster in Chrome 47.0.2526.106 on Mac OS X 10.11.1
+
+arr.unshift(0);
+[0].concat(arr); // 98% faster in Chrome 47.0.2526.106 on Mac OS X 10.11.1
+```
+
+> pop, shift, push, unshift 메소드의 동작 과정을 표현하면 다음과 같다.
+
+![example_2](./image/js_5_2.png)
+
+
+
+> ##### pop, push를 활용한 스택 구현
+>
+> `pop` 와 `push` 를 함께 사용하여 배열을 스택(LIFO: Last In First Out)처럼 동작하게 할 수 있다.
+
+```javascript
+var arr = [];
+
+arr.push(1); // [1]
+arr.push(2); // [1, 2]
+arr.push(3); // [1, 2, 3]
+
+arr.pop(); // [1, 2]
+arr.pop(); // [1]
+arr.pop(); // []
+```
+
+
+
+> ##### shift, push를 활용한 큐 구현
+>
+> `shift` 와 `push` 를 함께 사용하여 배열을 큐(FIFO: First In First Out)처럼 동작하게 할 수 있다.
+
+```javascript
+var arr = [];
+
+arr.push(1); // [1]
+arr.push(2); // [1, 2]
+arr.push(3); // [1, 2, 3]
+
+arr.shift(); // [2, 3]
+arr.shift(); // [3]
+arr.shift(); // []
+```
+
+
+
+##### Array.prototype.reverse()
+
+> 배열 요소의 순서를 반대로 변경한다. 이 때 원본 배열 자체를 변경하며,  변경된 원본 배열을 반환한다.
+
+```javascript
+var a = ['a', 'b', 'c'];
+var b = a.reverse();
+
+// 원본 배열이 변경된다
+console.log(a); // [ 'c', 'b', 'a' ]
+console.log(b); // [ 'c', 'b', 'a' ]
+```
+
+
+
+##### Array.prototype.slice()
+
+> 인자로 지정된 배열의 부분을 복사하여 반환한다. 원본 배열은 변경되지 않는다. 첫 번째 매개변수는 start 인덱스를 지정하고, 두 번째 매개변수는 end 인덱스를 지정한다. 
+>
+> 사용 형식은 다음과 같다.
+
+```javascript
+Array.slice(start, end);
+```
+
+> start 매개변수는 복사를 시작할 인덱스를 지정한다. 음수인 경우 배열의 끝에서의 인덱스를 나타낸다. 예를 들어 `-2` 로 지정하면 배열의 마지막 두 개 요소를 반환한다. 기본값은 `0`이다.
+>
+> end 매개변수는 복사를 끝낼 인덱스를 지정한다. 지정한 인덱스의 바로 직전 인덱스의 값까지 복사된다. 예를 들어 end의 값을 `3` 으로 지정하면, 2번 인덱스의 값까지만 복사된다. 기본값은 배열의 length 값이다.
+>
+> 사용 예시는 다음과 같다.
+
+```javascript
+const items = ['a', 'b', 'c'];
+
+// items[0]부터 items[1] 이전(items[1] 미포함)까지 반환
+let res = items.slice(0, 1);
+console.log(res);  // [ 'a' ]
+
+// items[1]부터 items[2] 이전(items[2] 미포함)까지 반환
+res = items.slice(1, 2);
+console.log(res);  // [ 'b' ]
+
+// items[1]부터 이후의 모든 요소 반환
+res = items.slice(1);
+console.log(res);  // [ 'b', 'c' ]
+
+// 인자가 음수인 경우 배열의 끝에서 요소를 반환
+res = items.slice(-1);
+console.log(res);  // [ 'c' ]
+
+res = items.slice(-2);
+console.log(res);  // [ 'b', 'c' ]
+
+// 모든 요소를 반환 (= 복사본(shallow copy) 생성)
+res = items.slice();
+console.log(res);  // [ 'a', 'b', 'c' ]
+
+// 원본은 변경되지 않는다.
+console.log(items); // [ 'a', 'b', 'c' ]
+```
+
+> 동작 방식은 다음과 같다. start ~ (end-1) 까지의 요소가 복사되어 반환된다.
+
+![example_3](./image/js_5_3.png)
+
+
+
+> ##### Array.prototype.slice와 shallow copy
+>
+> **Array.prototype.slice** 에 인자를 전달하지 않으면 원본 배열의 복사본을 생성하여 반환한다. 이 때 복사는 얕은 복사를 통해 복사본을 생성한다. 이는 다음의 예시를 통해 확인할 수 있다.
+
+```javascript
+var arr = [1, 2, 3];
+
+// 원본 배열 arr의 새로운 복사본을 생성한다.
+var copy = arr.slice();
+console.log(copy === arr); // false, 두 배열은 다른 배열이다.
+```
+
+```javascript
+const todos = [
+  { id: 1, content: 'HTML', completed: false },
+  { id: 2, content: 'CSS', completed: true },
+  { id: 3, content: 'Javascript', completed: false }
+];
+
+// shallow copy
+const _todos = todos.slice();
+
+// const _todos = [...todos];
+console.log(_todos === todos); // false, 두 배열은 다른 배열이다.
+
+// 그러나 배열의 요소들은 같다. 즉, 얕은 복사되었다.
+console.log(_todos[0] === todos[0]); // true
+```
+
+> 배열의 얕은 복사를 하는 다른 방법으로는 Spread Operator를 활용하는 방법과, Object.assign을 사용하는 방법 등이 있다. 깊은 복사를 하는 방법으로는 lodash의 deepClone을 사용하는 것을 추천한다.
+
+
+
+> ##### Array.prototype.slice, Function.prototype.call을 활용한 유사 배열 객체의 배열 변환
+>
+> arguements, HTMLCollection, NodeList와 같은 유사배열 객체를 배열로 변환하는 것이 가능하다. 다음 예시는 가변 길이의 인자를 받아 총합은 계산하는 함수이다. 
+
+```javascript
+function sum() {
+  // Array-like Object -> Array
+  var arr = Array.prototype.slice.call(arguments);
+  console.log(arr);	// [1, 2, 3, 4, 5]
+  
+  return arr.reduce(function(pre, cur) {
+    return pre + cur;
+  });
+}
+
+console.log(sum(1, 2, 3, 4, 5)); 	// 15
+```
+
+> ES6 에서는 **Spread Operaotor, Array.from() ** 등을 사용하여 간단하게 유사 배열 객체를 배열로 변환할 수 있다.
+
+```javascript
+function sum() {
+  ...
+  // Spread 문법을 활용한 배열 변환
+  var arr = [...arguments];
+  
+  // Array.from 메소드는 유사 배열 객체를 복사하여 배열을 생성한다.
+  var arr = Array.from(arguments);
+  ...
+}
+```
+
+
+
+##### Array.prototype.splice()
+
+> 기존의 배열 요소를 제거하고 그 위치에 새로운 요소를 추가한다. 배열 중간에 새로운 요소를 추가할 때 주로 사용된다. 대상 배열을 변경하는 메소드이며, 제거된 요소가 배열의 형태로 반환된다. 사용 형식은 다음과 같다.
+
+```javascript
+Array.prototype.splice(start, deleteCount, items)
+```
+
+> start는 요소의 제거, 새로운 요소를 추가할 시작 위치를 의미한다. 만약 start 만을 지정하면 배열의 start부터 모든 요소를 제거한다.
+>
+> deleteCount는 시작 위치인 start 부터 제거할 요소의 수를 의미한다. deleteCount를 0으로 지정하면, 어떤 요소도 제거되지 않는다.
+>
+> items는 삭제한 위치에 추가될 요소들이다. 만약 아무런 요소도 지정하지 않으면 추가할 요소가 없으르모 기존 요소의 삭제만 일어나게 된다.
+>
+> 사용 예시는 다음과 같다.
+
+```javascript
+const items1 = [1, 2, 3, 4];
+
+// items[1]부터 2개의 요소를 제거하고 제거된 요소를 배열로 반환
+const res1 = items1.splice(1, 2);
+
+// 원본 배열이 변경된다.
+console.log(items1); // [ 1, 4 ]
+// 제거한 요소가 배열로 반환된다.
+console.log(res1);   // [ 2, 3 ]
+```
+
+```javascript
+const items2 = [1, 2, 3, 4];
+
+// items[1]부터 모든 요소를 제거하고 제거된 요소를 배열로 반환
+const res2 = items2.splice(1);
+
+// 원본 배열이 변경된다.
+console.log(items2); // [ 1 ]
+// 제거한 요소가 배열로 반환된다.
+console.log(res2);   // [ 2, 3, 4 ]
+```
+
+```javascript
+const items3 = [1, 2, 3, 4];
+
+// items[1]부터 0개의 요소를 제거하고 그자리(items[1])에 새로운 요소를 추가한다. 제거된 요소가 반환된다.
+var res3 = items3.splice(1, 0, 100);
+
+// 원본 배열이 변경된다.
+console.log(items3); // [ 1, 100, 2, 3, 4 ]
+// 제거한 요소가 배열로 반환된다.
+console.log(res3);   // [ ]
+```
+
