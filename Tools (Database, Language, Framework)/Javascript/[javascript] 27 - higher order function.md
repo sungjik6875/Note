@@ -147,7 +147,7 @@ console.log(todos);
 
 
 
-##### Array.prototype.forEach()
+##### Array.prototype.forEach(func)
 
 > 배열을 순회할 때 사용하므로 for 문 대신 사용된다. 배열을 순회하면서 배열의 각 요소에 대하여 인자로 주어진 콜백 함수를 실행한다. 반환값은 undefined이다. 
 >
@@ -157,7 +157,7 @@ console.log(todos);
 >
 > forEach 메소드는 for 문에 비해 성능이 좋지 않다. 그러나 for 문보다 가독성이 좋으므로 사용하는 것을 권장한다.
 >
-> IE9에서 정상 동작한다.
+> IE9 이상에서 정상 동작한다.
 >
 > forEach의 활용 예시는 다음과 같다.
 
@@ -198,7 +198,7 @@ Square.prototype.multiply = function (arr) {
   arr.forEach(function (item) {
     // this를 인수로 전달하지 않으면 this === window
     this.array.push(item * item);
-  }, this);
+  }, this);	// this를 두 번째 인수로 전달한다.
 };
 
 const square = new Square();
@@ -206,3 +206,78 @@ square.multiply([1, 2, 3]);
 console.log(square.array); // [ 1, 4, 9 ]
 ```
 
+> ES6의 Arrow Function을 사용하면 this를 인수로 전달하지 않아도 된다. 다음과 같이 작성하면 위와 동일하게 동작한다.
+
+```javascript
+Square.prototype.multiply = function (arr) {
+    arr.forEach(item => this.array.push(item * item));
+};
+```
+
+
+
+##### Array.prototype.map(func)
+
+> 배열을 순회하며 각 요소에 대해 콜백 함수를 실행한다. **각 요소에 대한 콜백함수의 반환값을 배열에 담아 반환**한다. 이 때 원본 배열은 변경되지 않는다.
+>
+> forEach 메소드는 배열을 순회하며 요소 값을 참조하여 무언가를 하기 위한 함수이며 map 메소드는 배열을 순회하며 요소 값을 다른 값으로 매핑하기 위한 함수이다.
+>
+> 콜백 함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 그리고 map 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+>
+> IE9 이상에서 정상 동작한다.
+
+```javascript
+const nums = [1, 4, 9, 16, 25];
+
+// 배열을 순회하며 각 요소를 콜백함수의 인자로 사용, 반환값을 배열에 담아 반환한다.
+const roots = nums.map(function(elem) {
+    return Math.sqrt(elem);
+})
+
+
+// map 메소드는 배열 형태로 반환한다.
+console.log(roots);		// [1, 2, 3, 4, 5]
+
+// 원본 배열은 변경되지 않는다.
+console.log(nums);		// [1, 4, 9, 16, 25]
+```
+
+> 위 map 메소드는 다음과 같이 축약하여 표현이 가능하다.
+
+```javascript
+const roots = numbers.map(Math.sqrt);
+```
+
+> map 메소드에도 두 번째 인자로 this를 전달할 수 있다. 
+
+```javascript
+function Prefixer(prefix) {
+    this.prefix = prefix;
+}
+
+Prefixer.prototype.prefixArray = function(arr) {
+    return arr.map(function(elem) {
+        return this.prefix + elem;
+    }, this);
+};
+
+const pre = new Prefixer('-webkit-');
+const preArr = pre.prefixArray(['linear-gradient', 'border-radius']);
+
+console.log(preArr);
+// [ '-webkit-linear-gradient', '-webkit-border-radius' ]
+```
+
+> 마찬가지로 ES6의 Arrow Function을 사용하면 두 번째 인자인 this를 생략해도 동일하게 동작한다.
+
+```javascript
+Prefixer.prototype.prefixArray = function(arr) {
+    return arr.map(elem => this.prefix + elem);
+};
+```
+
+
+
+##### Array.prototype.filter(func)
+
+> 
