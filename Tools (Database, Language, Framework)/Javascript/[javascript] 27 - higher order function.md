@@ -222,7 +222,7 @@ Square.prototype.multiply = function (arr) {
 >
 > forEach 메소드는 배열을 순회하며 요소 값을 참조하여 무언가를 하기 위한 함수이며 map 메소드는 배열을 순회하며 요소 값을 다른 값으로 매핑하기 위한 함수이다.
 >
-> 콜백 함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 그리고 map 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+> 콜백함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 그리고 map 메소드를 호출한 배열인 this를 전달 받을 수 있다.
 >
 > IE9 이상에서 정상 동작한다.
 
@@ -280,4 +280,113 @@ Prefixer.prototype.prefixArray = function(arr) {
 
 ##### Array.prototype.filter(func)
 
-> 
+> 배열을 순회하며 각 요소에 대해 인자로 주어진 콜백함수의 실행 결과가 `true`인 배열 요소의 값만을 추출한 새로운 배열을 반환한다. 따라서 filter 메소드를 사용하면 if 문을 대체할 수 있다.
+>
+> filter 메소드는 배열에서 특정 케이스만 필터링 조건으로 추출하여 새로운 배열을 만들고자 할 때 사용한다. 이 때 반환값을 담을 배열을 새로 생성하며, 원본 배열은 변경되지 않는다.
+>
+> 콜백함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, filter 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+>
+> IE9 이상에서 정상 동작한다.
+
+```javascript
+const result = [1, 2, 3, 4, 5].filter(function(elem, idx, self) {
+		return elem % 2;		// 홀수 만을 필터링한다. (0은 false, 1은 true)
+})
+
+console.log(result);		// [1, 3, 5]
+```
+
+ 
+
+##### Array.prototype.reduce(func)
+
+> 배열을 순회하며 각 요소에 대해 이전의 콜백함수 실행 반환값을 전달하여 콜백함수를 실행하고 그 결과를 반환한다.
+>
+> 콜백함수의 매개변수를 통해 이전 콜백함수의 반환값, 배열 요소의 값, 요소의 인덱스, reduce 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+>
+> IE9 이상에서 정상 동작한다.
+
+```javascript
+const arr = [1, 2, 3, 4, 5];
+
+/*
+prevVal: 이전 콜백의 반환값
+curVal : 배열 요소의 값
+curIdx : 인덱스
+self   : 메소드를 호출한 배열, 즉 this
+*/
+
+// 배열의 합계를 구하는 메소드
+const sum = arr.reduce(function (prevVal, curVal, curIdx, self) {
+  return preVal + curVal;	// 이 반환값은 다음 콜백의 preVal로 전달된다.
+})
+
+console.log(sum); 	// 15
+
+
+// 배열의 최대값을 구하는 메소드
+const max = arr.reduce(function (preVal, curVal) {
+  return preVal > curVal ? preVal : curVal;
+})
+
+console.log(max);		// 5
+```
+
+
+
+> ##### Array.prototype.reduce 메소드의 초기값 설정
+>
+> Array.prototype.reduce의 두 번째 인수로 초기값을 전달할 수 있다. 이 값은 콜백함수에 최초로 전달된다. 위에서 예시로 들었던 배열의 합계를 구하는 메소드를 다시 예시로 사용해보자.
+
+```javascript
+const sum = [1, 2, 3, 4, 5].reduce(function (pre, cur) {
+  return pre + cur;
+}, 5);	// 초기값을 5로 설정
+
+console.log(sum); // 20
+```
+
+> 만약 배열의 각 요소가 객체이고, 객체의 프로퍼티의 값을 합산하고자 하는 경우에는 반드시 초기값을 설정해야 한다. 이에 대한 예시는 다음과 같다.
+
+```javascript
+const products = [
+  { id: 1, price: 100 },
+  { id: 2, price: 200 },
+  { id: 3, price: 300 }
+];
+
+/* 프로퍼티의 값을 합산하는 메소드 */
+
+// 1. 초기값을 설정하지 않으면 NaN이라는 결과가 발생
+// pre의 값은 처음 undefined로 초기화된다.
+const priceSum = products.reduce(function (pre, cur) {
+  return pre.price + cur.price;
+});
+console.log(priceSum);	// NaN
+
+
+// 2. pre의 초기값을 설정함으로써 위와 같은 결과로부터 회피 가능
+const priceSum = products.reduce(function (pre, cur) {
+  return pre + cur.price;
+}, 0);
+console.log(priceSum);	// 
+```
+
+> 만약 reduce를 호출하는 배열이 빈 배열인 경우 에러가 발생한다. 이런 경우에도 초기값을 전달하면 에러를 회피할 수 있다. 예시는 다음과 같다.
+
+```javascript
+const sum = [].reduce(function(pre, cur) {
+  return pre + cur;
+});
+// TypeError: Reduce of empty array with no initial value
+```
+
+```javascript
+const sum = [].reduce(function (pre, cur) {
+  console.log(pre, cur);
+  return pre + cur;
+}, 0);
+
+console.log(sum); // 0
+```
+
