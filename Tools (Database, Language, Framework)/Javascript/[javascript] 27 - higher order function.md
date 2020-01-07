@@ -390,3 +390,130 @@ const sum = [].reduce(function (pre, cur) {
 console.log(sum); // 0
 ```
 
+
+
+##### Array.prototype.some(func)
+
+> 배열 내 일부 요소가 콜백 함수의 테스트를 통과하는지 확인하여 그 결과를 `boolean`으로 반환한다. 테스트를 통과하는 요소가 하나 이상 존재한다면 `true`를 반환한다. 그렇지 않다면 `false`를 반환한다.
+>
+> 마찬가지로 콜백함수의 매개변수를 통해 배열 요소의 값과 요소의 인덱스, 메소드를 호출한 배열인 this를 전달 받을 수 있다. 
+>
+> IE9 이상에서 정상 동작한다.
+
+```javascript
+// 배열 내 요소 중 10보다 큰 값이 1개 이상 존재하는 지 확인한다.
+let res = [2, 5, 8, 1, 4].some(function(elem) {
+  	return elem > 10;
+});
+console.log(res); 	// false
+```
+
+```javascript
+res = [12, 5, 8, 1, 4].some(function(elem) {
+  	return elem > 10;
+})
+console.log(res); 	// true
+```
+
+```javascript
+res = ['apple', 'banana', 'mango'].some(function(elem) {
+  	return elem === 'banana';
+})
+console.log(res); 	// true
+```
+
+> Array.prototype.some() 역시 두 번째 인자로 this를 전달할 수 있다.
+
+
+
+##### Array.prototype.every(func)
+
+> 배열 내 모든 요소가 콜백함수의 테스트를 통과하는지 확인하여 그 결과를 `boolean`으로 반환한다. Array.prototype.some()과는 다르게 모든 요소가 통과해야만 `true`를 반환한다. 그렇지 않으면 `false`를 반환한다.
+>
+> 콜백함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 메소드를 호출한 배열인 this를 전달받을 수 있다.
+>
+> IE9 이상에서 정상 동작한다.
+
+```javascript
+let res = [21, 15, 89, 1, 44].every(function(elem) {
+  	return elem > 10;
+});
+console.log(res);		// false
+```
+
+```javascript
+res = [21, 15, 89, 100, 44].every(function(elem) {
+  	return elem > 10;
+});
+console.log(res);		// true
+```
+
+> Array.prototype.every() 역시 두 번째 인자로 this를 전달할 수 있다.
+
+
+
+##### Array.prototype.find(func)
+
+> 배열을 순회하며 각 요소에 대해 콜백함수를 실행하여, 실행 결과로 true를 반환하는 첫 번째 요소를 반환한다. 콜백함수의 실행 결과가 true인 요소가 존재하지 않는다면 undefined를 반환한다.
+>
+> 콜백함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+>
+> Array.prototype.filter()와 비교하자면 filter는 콜백함수의 실행결과가 true인 배열 요소들을 배열에 담아 반환하는 반면, find는 실행결과가 true인 첫 번째 요소를 반환한다는 점에서 차이가 있다.
+>
+> ES6에서 새롭게 도입된 메소드로 IE에서는 지원하지 않는다.
+
+```javascript
+const users = [
+  { id: 1, name: 'Lee' },
+  { id: 2, name: 'Kim' },
+  { id: 2, name: 'Choi' },
+  { id: 3, name: 'Park' }
+];
+
+let result = users.find(function (elem) {
+  return elem.id === 2;
+});
+
+console.log(result);
+// { id: 2, name: 'Kim' }, 요소를 반환한다.
+
+let result = users.filter(elem => elem.id === 2);
+
+console.log(result);
+// [ { id: 2, name: 'Kim' },{ id: 2, name: 'Choi' } ]
+// 배열을 반환한다.
+```
+
+
+
+##### Array.prototype.findIndex(func)
+
+> 배열을 순회하며 각 요소에 대하여 인자로 주어진 콜백함수를 실행하여 그 결과가 참인 첫 번째 요소의 인덱스를 반환한다. 콜백함수의 실행 결과가 참인 요소가 존재하지 않는다면 -1을 반환한다.
+>
+> 콜백함수의 매개변수를 통해 배열 요소의 값, 요소 인덱스, 메소드를 호출한 배열인 this를 전달 받을 수 있다.
+>
+> ES6에서 새롭게 도입된 메소드로 IE에서는 지원하지 않는다.
+
+```javascript
+const users = [
+  { id: 1, name: 'Lee' },
+  { id: 2, name: 'Kim' },
+  { id: 2, name: 'Choi' },
+  { id: 3, name: 'Park' }
+];
+
+// predicate는 함수를 반환한다.
+function predicate(key, value) {
+  return function(elem) {
+    return elem[key] === value;
+  };
+}
+
+// predicate('id', 2) => function(elem) { return elem['id'] === 2 };
+let index = users.findIndex(predicate('id', 2));
+console.log(index);		// 1
+
+index = users.findIndex(predicate('name', 'Park'));
+console.log(index); 	// 3
+```
+
