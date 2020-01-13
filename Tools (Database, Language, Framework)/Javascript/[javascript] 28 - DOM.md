@@ -102,3 +102,142 @@
 ![example_1](./image/js_28_4.png)
 
 > DOM을 활용하여 웹 페이지를 조작하기 위해서는 먼저 조작하고자 하는 요소를 DOM tree를 순회함으로써 탐색한다. 선택된 요소의 콘텐츠 또는 어트리뷰트를 조작함으로써 조작이 이루어진다. 그리고 자바스크립트는 이러한 조작에 사용되는 방법(API)를 제공한다.
+
+
+
+
+
+#### DOM Query / Traversing (요소에의 접근)
+
+------
+
+
+
+##### 하나의 요소 노드 선택
+
+> ##### document.getElementById(id)
+>
+> id 어트리뷰트 값으로 요소 노드 하나를 선택한다. 복수 개가 선택된 경우, 첫 번째 요소만 반환한다. **HTMLElement를 상속받은 객체**를 반환한다. 모든 브라우저에서 동작한다.
+>
+> 예시는 다음과 같다.
+
+```javascript
+// id로 하나의 요소를 선택한다.
+const elem = document.getElementById('one');
+// 클래스 어트리뷰트의 값을 변경한다.
+elem.className = 'blue';
+
+console.log(elem); 	// <li id="one" class="blue">Seoul</li>
+console.log(elem.__proto__);	// HTMLLIElement
+console.log(elem.__proto__.__proto__); // HTMLElement
+console.log(elem.__proto__.__proto__.__proto__); // Element
+console.log(elem.__proto__.__proto__.__proto__.__proto__); // Node
+```
+
+
+
+> ##### document.querySelector(cssSelector)
+>
+> css 셀렉터를 사용하여 요소 노드를 한 개 선택한다. 복수개가 선택된 경우, 첫 번째 요소만 반환한다. 마찬가지로 **HTMLElement를 상속받은 객체**를 반환한다. IE8 이상의 브라우저에서 동작한다.
+
+```javascript
+// CSS 셀렉터를 이용해 요소를 선택한다.
+const elem = document.querySelector('li.red');
+// 클래스 어트리뷰트의 값을 변경한다.
+elem.className = 'blue';
+```
+
+
+
+##### 여러 개의 요소 노드 선택
+
+> ##### document.getElementsByClassName(class)
+>
+> class 어트리뷰트 값으로 일치하는 요소 노드를 모두 선택한다. 공백으로 구분하여 여러 개의 class 어트리뷰트를 지정할 수 있다. **HTMLCollection**를  반환한다. IE9 이상의 브라우저에서 동작한다.
+>
+> HTMLCOllection은 **live**하다는 특징이 있다. 이 의미에 대해서 파악하기 전에 먼저 다음의 예시를 보자.
+
+```javascript
+// HTMLCollection을 반환한다. HTMLCOllection은 live하다.
+const elems = document.getElementsByClassName('red');
+
+for (let i = 0; i < elems.length; i++) {
+  // 클래스 어트리뷰트의 값을 변경한다.
+  elems[i].className = 'blue';
+}
+```
+
+> 위 예제를 실행하기 전에, 먼저 위 예제가 어떻게 동작할지 예상해보자. elems에는 class가 red인 node들이 반환될 것이다. 따라서 각 노드들을 순회하며 red 클래스가 blue 클래스로 변경될 것으로 예상할 수 있다. 
+>
+> 다음은 위 예시를 실행한 결과의 화면이다.
+
+![example_1](./image/js_28_5.png)
+
+> 그러나 위 예제를 실행해보면 예상대로 동작하지 않을 것이다. 실행해보면 두 번째 요소가 클래스 변경이 되지 않는 것을 확인할 수 있다. 이렇게 동작하는 이유는 무엇일까?
+>
+> 먼저 HTMLCollection란 어떤 객체일까? 이 객체는 HTMLElement의 리스트를 담아 반환하기 위한 객체로 배열과 비슷한 사용법을 가지고 있으나 배열이 아닌 유사 배열(Array-like Object)이다. 그리고 HTMLCollection은 실시간으로 Node의 상태 변경을 반영하는데, 이러한 특성을 live하다고 표현한 것이다.
+>
+> 그렇다면, 이 live한 특성이 어떻게 위 예시처럼 동작하게 했는지 알아보자.
+
+> ##### HTMLCollection의 live한 특성
+>
+> elems.length는 3이므로 총 3번의 loop가 실행된다. 
+>
+> i가 0일때, elems의 첫 요소의 class 어트리뷰트의 값이 className 프로퍼티에 의해 red에서 blue로 변경된다. 이 때 elems는 실시간으로 Node의 상태 변경을 반영하는 HTMLCollection 객체이다. elems의 첫 요소는 li#one.red에서 li#one.blue로 변경되었으므로 getElementsByClassName 메소드의 인자로 지정한 선택 조건(‘red’)과 더이상 부합하지 않게 되어 반환값에서 실시간으로 제거된다.
+>
+> i가 1일때, elems에서 첫째 요소는 제거되었으므로 elems[1]은 3번째 요소(li#three.red)가 된다. li#three.red의 class 어트리뷰트 값이 blue로 변경되고 마찬가지로 HTMLCollection에서 제외된다.
+>
+> i가 2일때, HTMLCollection의 1,3번째 요소가 실시간으로 제거되었으므로 2번째 요소(li#two.red)만 남았다. 이때 elems.length는 1이므로 for 문의 조건식 i < elems.length가 false로 평가되어 반복을 종료한다. 따라서 elems에 남아 있는 2번째 li 요소(li#two.red)의 class 값은 변경되지 않는다.
+>
+> 위와 같이 HTMLCollection은 실시간으로 노드의 상태 변경을 반영하기 때문에 loop가 필요한 경우 주의가 필요하다. 위와 같이 동작하는 것을 아래와 같은 방법들로 회피할 수 있다.
+
+> ##### HTMLCollection의 반복문시 우회 방법
+
+* 반복문을 역방향으로 진행한다.
+
+```javascript
+const elems = document.getElementsByClassName('red');
+
+for (let i = elems.length - 1; i >= 0; i--) {
+  elems[i].className = 'blue';
+}
+```
+
+* While 반복문을 사용한다. 이 떄 elems에 요소가 남아있지 않을 때 까지 무한반보하기 위해 index는 0으로 고정한다.
+
+```javascript
+const elems = document.getElementsByClassName('red');
+
+let i = 0;
+while (elems.length > i) {
+  elems[i].className = 'blue';
+}
+```
+
+* HTMLCollection을 배열로 변경한다. 권장하는 방법이다.
+
+```javascript
+const elems = document.getElementsByClassName('red');
+
+// 유사 배열 객체인 HTMLCollection을 배열로 변환한다.
+// 배열로 변환된 HTMLCollection은 더 이상 live하지 않으므로 순회하면 된다.
+[...elems].forEach(elem => elem.className = 'blue');
+```
+
+* querySelectorAll 메소드를 사용하여 NodeList를 반환하게 한다.
+
+
+
+> ##### querySelectorAll(cssSelector)
+>
+> 마찬가지로 css Selector가 일치하는 요소 노드를 모두 선택한다. 그러나 **NodeList**를 반환한다는 특징이 있다. 이 NodeList는 non-live하다는 특징이 있어 일반적인 순회방법으로 노드의 어트리뷰트를 변경할 수 있다. IE8 이상의 브라우저에서 동작한다.
+>
+> 예시는 다음과 같다.
+
+```javascript
+// Nodelist를 반환한다.
+const elems = document.querySelectorAll('li.red');
+
+[...elems].forEach(elem => elem.className = 'blue');
+```
+
