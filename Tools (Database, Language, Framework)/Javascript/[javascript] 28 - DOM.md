@@ -111,8 +111,6 @@
 
 ------
 
-
-
 ##### 하나의 요소 노드 선택
 
 > ##### document.getElementById(id)
@@ -171,13 +169,19 @@ for (let i = 0; i < elems.length; i++) {
 >
 > 다음은 위 예시를 실행한 결과의 화면이다.
 
+
+
 ![example_1](./image/js_28_5.png)
+
+
 
 > 그러나 위 예제를 실행해보면 예상대로 동작하지 않을 것이다. 실행해보면 두 번째 요소가 클래스 변경이 되지 않는 것을 확인할 수 있다. 이렇게 동작하는 이유는 무엇일까?
 >
 > 먼저 HTMLCollection란 어떤 객체일까? 이 객체는 HTMLElement의 리스트를 담아 반환하기 위한 객체로 배열과 비슷한 사용법을 가지고 있으나 배열이 아닌 유사 배열(Array-like Object)이다. 그리고 HTMLCollection은 실시간으로 Node의 상태 변경을 반영하는데, 이러한 특성을 live하다고 표현한 것이다.
 >
 > 그렇다면, 이 live한 특성이 어떻게 위 예시처럼 동작하게 했는지 알아보자.
+
+
 
 > ##### HTMLCollection의 live한 특성
 >
@@ -190,6 +194,8 @@ for (let i = 0; i < elems.length; i++) {
 > i가 2일때, HTMLCollection의 1,3번째 요소가 실시간으로 제거되었으므로 2번째 요소(li#two.red)만 남았다. 이때 elems.length는 1이므로 for 문의 조건식 i < elems.length가 false로 평가되어 반복을 종료한다. 따라서 elems에 남아 있는 2번째 li 요소(li#two.red)의 class 값은 변경되지 않는다.
 >
 > 위와 같이 HTMLCollection은 실시간으로 노드의 상태 변경을 반영하기 때문에 loop가 필요한 경우 주의가 필요하다. 위와 같이 동작하는 것을 아래와 같은 방법들로 회피할 수 있다.
+
+
 
 > ##### HTMLCollection의 반복문시 우회 방법
 
@@ -241,3 +247,330 @@ const elems = document.querySelectorAll('li.red');
 [...elems].forEach(elem => elem.className = 'blue');
 ```
 
+
+
+##### DOM Traversing (탐색)
+
+> ##### parentNode
+
+* 부모 노드를 탐색한다. 
+
+* HTMLElement를 상속받은 객체를 반환한다. 
+
+* 모든 브라우저에서 동작한다.
+
+```javascript
+const elem = document.querySelector('#two');
+elem.parentNode.className = 'blue';
+```
+
+
+
+> ##### firstChild, lastChild
+
+* 자식 노드를 탐색한다. 
+
+* HTMLElement를 상속받은 객체를 반환한다. 
+
+* IE9 이상의 브라우저에서 동작한다. 
+
+```javascript
+const elem = document.querySelector('ul');
+
+// 다음의 코드는 예상대로 동작하지 않는다.
+elem.firstChild.className = 'blue';
+elem.lastChild.className = 'blue';
+```
+
+> 위 예제를 보면 예상대로 동작하지 않는다. 그 이유는 IE를 제외한 대부분의 브라우저들은 요소 사이의 공백 또는 줄바꿈 문자를 텍스트 노드로 취급하기 때문이다. 따라서 위 예시의 elem.firstChild와 elem.lastChild를 콘솔에 출력해보면 `#text` 노드로 출력되는 것을 확인할 수 있다.
+>
+> 이를 방지하는 방법으로 다음과 같이 요소 사이의 공백을 제거하는 방법이 있다.
+
+```javascript
+<ul><li
+  id='one' class='red'>Seoul</li><li
+  id='two' class='red'>London</li><li
+  id='three' class='red'>Newyork</li><li
+  id='four'>Tokyo</li></ul>
+```
+
+> 그러나 이 방법은 가독성을 떨어뜨리므로 권장할 만한 방법은 아니다. 더 좋은 방법으로는 firstElementChild, lastElementChild를 사용하는 방법이 있다. 이 프로퍼티들은 IE9 이상에서 정상적으로 동작한다.
+
+```javascript
+const elem = document.querySelector('ul');
+
+elem.firstElementChild.className = 'blue';
+elem.lastElementChild.className = 'blue';
+```
+
+
+
+> ##### hasChildNodes()
+
+* 자식 노드가 있는지 확인한다.
+* 자식 노드의 여부에 따라 boolean을 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### childNodes
+
+* 자식 노드의 컬렉션을 반환한다. 텍스트 요소를 포함한 모든 자식 요소를 반환한다.
+* NodeList (non-live)의 형태로 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### children
+
+* 자식 노드의 컬렉션을 반환한다. 자식 요소 중에서 Element type 요소만을 반환한다.
+* HTMLCollection (live)의 형태로 반환한다.
+* IE9 이상의 브라우저에서 동작한다.
+
+
+
+> 위 세 API에 대한 예시는 다음과 같다.
+
+```javascript
+const elem = document.querySelector('ul');
+
+if (elem.hasChildNodes()) {
+  console.log(elem.childNodes);
+  console.log(elem.children);
+  
+  [...elem.children].forEach(elem => console.log(elem.nodeType));
+}
+```
+
+```javascript
+console.log(elem.childNodes);
+// NodeList(9) [text, li#one.red, text, li#two.red, text, li#three.red, text, li#four, text]
+// 텍스트 요소를 포함한 모든 자식 요소를 반환한다.
+```
+
+```javascript
+console.log(elem.children);
+// HTMLCollection(4) [li#one.red, li#two.red, li#three.red, li#four, one: li#one.red, two: li#two.red, three: li#three.red, four: li#four]
+// 자식 요소 중에서 Element type 요소만을 반환한다.
+```
+
+```javascript
+[...elem.children].forEach(elem => console.log(elem.nodeType));
+// 1이 총 네 번 반환된다. (1은 nodeType중 Element node를 의미한다.)
+```
+
+
+
+> ##### previousSibling, nextSibling
+
+* 형제 노드를 탐색한다. 텍스트 노드를 포함한 모든 형제 노드를 탐색한다.
+* HTMLElement를 상속받은 객체를 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### previousElementSibling, nexeElementSibling
+
+* 형제 노드를 탐색한다. 형제 노드 중에서 Element type 요소만을 탐색한다.
+* HTMLElement를 상속받은 객체를 반환한다.
+* IE9 이상의 브라우저에서 동작한다.
+
+
+
+> 위의 API에 대한 예시는 다음과 같다.
+
+```javascript
+const elem = document.querySelector('ul');
+
+elem.firstElementChild.nextElementSibling.className = 'blue';
+elem.lastElementChild.previousElementSibling.className = 'blue';
+```
+
+
+
+
+
+#### DOM Manipulation (조작)
+
+------
+
+##### 텍스트 노드에의 접근 / 수정
+
+![example_1](./image/js_28_6.png)
+
+> 요소의 텍스트는 텍스트 노드에 저장되어 있다. 텍스트 노드에 접근하려면 다음과 같은 수순이 필요하다.
+
+* 해당 텍스트 노드의 부모 노드인 요소 노드를 선택한다.
+* firstChild 프로퍼티를 사용하여 텍스트 노드를 탐색한다.
+* 텍스트 노드의 유일한 프로퍼티인 nodeValue를 이용하여 텍스트를 취득한다.
+* nodeValue를 이용하여 텍스트를 수정한다.
+
+> nodeValue 프로퍼티에 대한 설명은 다음과 같다.
+
+
+
+> ##### nodeValue
+
+* 노드의 값을 반환한다.
+* 텍스트 노드의 경우 문자열, 요소 노드의 경우 null을 반환한다.
+* IE6 이상의 브라우저에서 동작한다.
+
+
+
+> nodeValue 외에도 **nodeName, nodeType**을 통해 노드의 정보를 취득할 수 있다. 이 세 API에 대한 예시는 다음과 같다.
+
+```javascript
+// 해당 텍스트 노드의 부모 요소 노드를 선택한다.
+const one = document.getElementById('one');
+console.dir(one); // HTMLLIElement: li#one.red
+
+// nodeName, nodeType을 통해 노드의 정보를 취득할 수 있다.
+console.log(one.nodeName); // LI
+console.log(one.nodeType); // 1: Element node
+
+// firstChild 프로퍼티를 사용하여 텍스트 노드를 탐색한다.
+const textNode = one.firstChild;
+
+// nodeName, nodeType을 통해 노드의 정보를 취득할 수 있다.
+console.log(textNode.nodeName); // #text
+console.log(textNode.nodeType); // 3: Text node
+
+// nodeValue 프로퍼티를 사용하여 노드의 값을 취득한다.
+console.log(textNode.nodeValue); // Seoul
+
+// nodeValue 프로퍼티를 이용하여 텍스트를 수정한다.
+textNode.nodeValue = 'Pusan';
+```
+
+
+
+##### 어트리뷰트 노드에의 접근 / 수정
+
+> 어트리뷰트 노드를 조작할 때 다음 프로퍼티 또는 메소드를 사용할 수 있다.
+
+
+
+> ##### className
+
+* class 어트리뷰트의 값을 취득 또는 변경한다. 
+* className 프로퍼티에 값을 할당하는 경우, class 어트리뷰트가 존재하지 않으면 class 어트리뷰트를 생성하고 지정된 값을 설정한다. 
+* class 어트리뷰트의 값이 여러 개일 경우, 공백으로 구분된 문자열이 반환되므로 String 메소드 `split(' ')`을 사용하여 배열로 변경하여 사용하면 된다.
+* 모든 브라우저에서 동작한다.
+
+```javascript
+const ul = document.querySelector('ul');
+
+const first = ul.firstElementChild;
+console.log(first.className); 	// red;
+
+first.className = 'blue';
+console.log(first.className); 	// blue;
+
+ul.lastElementChild.className = 'blue red';
+console.log(ul.lastElementChild.className)	// blue red
+```
+
+
+
+> ##### classList
+
+* 요소의 클래스 어트리뷰트들을 반환한다.
+* DOMTokenList의 형태로 반환한다.
+
+* Add, remove, item, toggle, contains, replace 메소드를 제공한다.
+* IE10 이상의 브라우저에서 동작한다.
+
+```javascript
+const seoul = document.querySelector('ul').firstElementChild;
+seoul.className = "red blue green yellow black white";
+
+console.log(seoul.classList);
+// DOMTokenList(6) ["red", "blue", "green", "yellow", "black", "white", value: "red blue green yellow black white"]
+
+seoul.classList.add('purple');
+console.log(seoul.classList);
+// DOMTokenList(7) ["red", "blue", "green", "yellow", "black", "white", "purple", value: "red blue green yellow black white purple"]
+
+seoul.classList.remove('red');
+console.log(seoul.classList);
+// DOMTokenList(6) ["blue", "green", "yellow", "black", "white", "purple", value: "blue green yellow black white purple"]
+
+seoul.classList.replace("blue", "red");
+// true : replace 성공 여부에 따라 boolean 반환
+console.log(seoul.classList);
+// DOMTokenList(6) ["red", "green", "yellow", "black", "white", "purple", value: "red green yellow black white purple"]
+
+seoul.classList.contains("blue")
+// false : 클래스 어트리뷰트에 포함되었는지 여부에 따라 boolean 반환
+```
+
+
+
+> ##### id
+
+* id 어트리뷰트의 값을 취득 또는 변경한다. 
+* id 프로퍼티에 값을 할당하는 경우, id 어트리뷰트가 존재하지 않으면 id 어트리뷰트를 생성하고 지정된 값을 설정한다.
+* 모든 브라우저에서 동작한다.
+
+```javascript
+// h1 태그 요소 중 첫번째 요소를 취득
+const h1 = document.querySelector('h1');
+
+console.dir(h1); // HTMLHeadingElement: h1
+console.log(h1.firstChild.nodeValue); // Cities
+
+// id 어트리뷰트의 값을 변경.
+// id 어트리뷰트가 존재하지 않으면 id 어트리뷰트를 생성하고 지정된 값을 설정
+h1.id = 'heading';
+console.log(h1.id); // heading
+```
+
+
+
+> ##### hasAttribute(attribute)
+
+* 지정한 어트리뷰트를 가지고 있는지 검사한다.
+* 갖고 있는지 여부에 따라 boolean을 반환한다.
+* IE8 이상의 브라우저에서 동작한다.
+
+
+
+> ##### getAttribute(attribute)
+
+* 어트리뷰트의 값을 취득한다.
+* 문자열을 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### setAttribute(attribute, value)
+
+* 어트리뷰트와 어트리뷰트의 값을 설정한다.
+* 반환값은 없으며(undefined), 모든 브라우저에서 동작한다.
+
+
+
+> ##### removeAttribute(attribute)
+
+* 지정한 어트리뷰트를 제거한다.
+* 반환값은 없으며(undefined), 모든 브라우저에서 동작한다.
+
+
+
+> 이 네 가지 API에 대한 예시는 다음과 같다.
+
+```javascript
+// input 요소의 생성 및 div의 자식 요소로 추가
+const input = document.createElement('input');
+const div = document.querySelector('div');
+div.appendChild(input);
+
+input.setAttribute('value', 'hello');	// undefined, 'value' 요소 추가
+input.hasAttribute('value');					// true
+input.getAttribute('value');					// hello
+input.removeAttribute('value'); 			// undefined, 'value' 요소 제거
+```
+
+
+
+##### HTML 콘텐츠 조작 (Manipulation)
