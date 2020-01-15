@@ -573,4 +573,272 @@ input.removeAttribute('value'); 			// undefined, 'value' 요소 제거
 
 
 
-##### HTML 콘텐츠 조작 (Manipulation)
+##### HTML 컨텐츠 조작 (Manipulation)
+
+> 자바스크립트에는 HTML 컨텐츠를 조작하기 위해 다음의 프로퍼티나 메소드를 사용할 수도 있다. 그런데 마크업이 포함된 컨텐츠를 추가하는 행위는 **크로스 스크립팅 공격(XSS: Cross-Site Scripting Attacks)**에 취약하므로 주의가 필요하다.
+
+
+
+> ##### textContent
+
+* 요소의 텍스트 컨텐츠를 취득 또는 변경한다. 이때 마크업은 무시된다. 
+* textContent를 통해 요소에 새로운 텍스트를 할당하면 텍스트를 변경할 수 있다. 이 때 순수한 텍스트만 지정해야 하며 마크업을 포함시키면 문자열로 인식되어 화면에 그대로 출력된다.
+* IE9 이상의 브라우저에서 동작한다.
+
+```javascript
+const ul = document.querySelector('ul');
+console.log(ul.textContent);
+/* 
+	Seoul
+	London
+	Newyork
+	Tokyo
+*/
+
+const one = document.getElementById('one');
+console.log(one.textContent);		// Seoul
+
+one.textContent += ", Korea";
+console.log(one.textContent);		// Seoul, Korea
+
+one.textContent = '<h1>Heading</h1>';
+console.log(one.textContent);		// <h1>Heading</h1>
+```
+
+
+
+> ##### innerText
+
+* textContent 처럼 요소의 텍스트 컨텐츠에 접근할 수 있다. 그러나 다음과 같은 이유로 사용하지 않는 것이 좋다.
+* 비표준이다.
+* CSS에 영향을 받는다. 요소의 CSS중 `visibility: hidden`이 있다면 텍스트가 반환되지 않는다. 추가로 CSS를 고려해야 하므로 textContent보다 느리다.
+
+
+
+> ##### innerHTML
+
+* 해당 요소의 모든 자식 요소를 포함하는 모든 컨텐츠를 하나의 문자열로 취득할 수 있다. 이 문자열은 마크업을 포함한다.
+
+```javascript
+const ul = document.querySelector('ul');
+console.log(ul.innerHTML);
+/*
+	<li id="one" class="red">Seoul</li>
+	<li id="two" class="red">London</li>
+	<li id="three" class="red">Newyork</li>
+	<li id="four">Tokyo</li>
+*/
+```
+
+* innerHTML 프로퍼티를 사용하여 마크업이 포함된 새로운 컨텐츠를 지정하면 새로운 요소를 DOM에 추가할 수 있다.
+
+```javascript
+const one = document.getElementById('one');
+console.log(one.innerHTML);		// Seoul
+
+one.innerHTML += '<em class="blue">, Korea</em>';
+console.log(one.innerHTML);
+// Seoul<em class="blue">, Korea</em>
+```
+
+
+
+> ##### innerHTML을 활용한 XSS 예시
+>
+> 위에서도 언급하였듯, 위와 같이 마크업이 포함된 컨텐츠를 추가하는 것은 크로스 스크립팅 공격(XSS)에 취약하다. XSS의 예시를 보자.
+
+```javascript
+// 스크립트 태그를 추가하여 자바스크립트 코드가 실행되도록 한다.
+const one = document.getElementById('one');
+one.innerHTML = '<script>alert("XSS!")</script>';
+```
+
+> 그러나 위의 코드는 동작하지 않을 수 있다. HTML5에서는 innerHTML로 삽입된 `<script>` 코드는 실행되지 않는다. 이외에도 크롬, 파이어폭스 등의 브라우저나 최신 브라우저 환경에서는 동작하지 않을 수 있다.
+>
+> 그러나 다음의 코드는 크롬에서도 동작한다.
+
+```javascript
+// 에러 이벤트를 발생시킴으로써 자바스크립트 코드가 실행된다.
+one.innerHTML = '<img src="#" onerror="alert(\'XSS\')">';
+```
+
+
+
+##### DOM 조작 방식
+
+> innerHTML 프로퍼티를 사용하지 않고 새로운 컨텐츠를 추가할 수 있는 방법은 DOM을 직접 조작하는 것이다. 하나의 요소를 추가하는 경우 사용한다. DOM을 직접 조작하는 방법은 다음의 순서로 진행한다.
+
+> ##### 새로운 요소의 생성
+
+* 요소 노드 생성 createElement() 메소드를 사용하여 새로운 요소 노드를 생성한다. createElement() 메소드의 인자로 태그 이름을 전달한다.
+* 텍스트 노드 생성 createTextNode() 메소드를 사용하여 새로운 텍스트 노드를 생성한다. 경우에 따라 생략될 수 있지만 생략하는 경우, 컨텐츠가 비어있는 요소가 된다.
+* 생성된 요소를 DOM에 추가한다. appendChild() 메소드를 사용하여 생성된 노드를 DOM tree에 추가한다.
+
+> ##### 기존 요소의 제거
+
+* removeChild() 메소드를 사용하여 DOM tree에서 노드를 삭제할 수 있다.
+
+
+
+> 위에서 언급한, DOM 조작에 사용되는 메소드들은 다음과 같다.
+
+> ##### createElement(tagName)
+
+* 태그명을 인자로 전달하여 요소를 생성한다. 태그명이 아닌 경우 에러가 발생한다.
+* HTMLElement를 상속받은 객체를 반환한다.
+* 모든 브라우저에서 동작한다.
+
+```javascript
+// createElement의 인자는 태그명이어야 한다.
+const elem = document.createElement('<li>test</li>');
+// Uncaught DOMException: Failed to execute 'createElement' on 'Document': The tag name provided ('<li>test</li>') is not a valid name.
+```
+
+
+
+> ##### createTextNode(text)
+
+* 텍스트를 인자로 전달하여 텍스트 노드를 생성한다.
+* Text 객체를 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### appendChild(Node)
+
+* 인자로 전달한 노드를 마지막 자식 요소로 DOM 트리에 추가한다.
+* 새로 추가한 노드를 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> ##### removeChild(Node)
+
+* 인자로 전달한 노드를 DOM 트리에서 제거한다.
+* 제거된 노드를 반환한다.
+* 모든 브라우저에서 동작한다.
+
+
+
+> 위의 API들을 사용하여 DOM을 조작하는 예시는 다음과 같다.
+
+```javascript
+// li 태그 생성
+const li = document.createElement('li');
+
+// 텍스트 노드 생성 및 li 태그의 자식 노드로 추가
+const textNode = document.createTextNode('Beijing');
+li.appendChild(textNode);
+
+// li 태그를 ul 태그의 자식 요소로 추가
+const ul = document.querySelector('ul');
+ul.appendChild(li);
+
+// <li>seoul</li> 태그를 제거
+const seoul = document.getElementById('one');
+ul.removeChild(seoul);
+```
+
+
+
+##### insertAdjacentHTML()
+
+> 모든 브라우저에서 동작하는 메소드이다. 인자로 전달한 텍스트를 HTML로 파싱하고 그 결과로 생성된 노드를 DOM 트리의 지정된 위치에 삽입한다. 사용 형식은 다음과 같다.
+
+```javascript
+insertAdjacentHTML(position, string)
+```
+
+> 인자로 삽입 위치를 결정하는 position, 삽입할 요소를 표현한 문자열인 string이 필요하다. position의 인자로 사용되는 값은 다음과 같다.
+
+* beforebegin
+* afterbegin
+* beforeend
+* afterend
+
+> 이 인자들이 의미하는 위치는 다음과 같다.
+
+![example_1](./image/js_28_7.png)
+
+```javascript
+const seoul = document.getElementById('one');
+const london = document.getElementById('two');
+
+seoul.insertAdjacentHTML('afterbegin', '<span>Gangnam, </span>');
+london.insertAdjacentHTML('beforeend', '<span>, UK</span>');
+```
+
+
+
+##### innerHTML, DOM 조작, insertAdjacentHTML의 비교
+
+> 각 조작 방식의 장단점은 다음과 같다.
+
+
+
+> ##### innerHTML
+
+* 장점
+  * DOM 조작 방식에 비해 빠르고 간편하다.
+  * 간편하게 문자열로 정의한 여러 요소를 DOM에 추가할 수 있다.
+  * 컨텐츠를 취득할 수 있다.
+* 단점
+  * XSS 공격에 취약하므로 사용자로부터 받은 입력값(untrusted data : 댓글, 사용자 이름 등)을 추가할 때 주의해야 한다.
+  * 해당 요소의 내용을 덮어쓴다. 즉, HTML을 다시 파싱하는데 이는 비효율적이다.
+
+
+
+> ##### DOM 조작
+
+* 장점
+  * 특정 노드 한 개(노드, 텍스트, 데이터 등)를 추가할 때 적합하다.
+* 단점
+  * innerHTML보다 느리며, 더 많은 코드가 필요하다.
+
+
+
+> ##### insertAdjacentHTML()
+
+* 장점
+  * 간편하게 문자열로 정의된 여러 요소를 DOM에 추가할 수 있다.
+  * 삽입될 위치를 선정할 수 있다.
+* 단점
+  * XSS 공격에 취약하므로 사용자로부터 받은 입력값(untrusted data : 댓글, 사용자 이름 등)을 추가할 때 주의해야 한다.
+
+
+
+> 위의 내용을 정리하자면, innerHTML과 insertAdjacentHTML()은 XSS에 취약하다. 따라서 untrusted data를 추가하는 경우에는 주의하여야 한다. 텍스트를 추가하거나 변경할 때에는 textContent를, 새로운 요소를 추가하거나 제거할 때에는 DOM 조작 방식을 사용하는 것을 권장한다.
+
+
+
+
+
+#### Style
+
+------
+
+> style 프로퍼티를 사용하면 inline 스타일 선언을 생성한다. 특정 요소에 inline 스타일을 지정하는 경우에 사용한다.
+
+```javascript
+const four = document.getElementById('four');
+
+four.style.color = 'blue';		// 폰트 색상이 푸른색으로 변경된다.
+four.style.fontSize = '2em';	// 폰트 크기가 변경된다.
+```
+
+> CSS 프로퍼티 중 `font-size` 와 같이 `-` 로 구분되는 프로퍼티는 camelCase로 변환하여 사용한다.
+
+
+
+##### window.getComputedStyle()
+
+> 인자로 주어진 요소의 모든 CSS 프로퍼티 값을 **CSSStyleDeclaration**이라는 객체에 담아 반환한다.
+
+```javascript
+window.getComputedStyle(four);
+
+/*
+CSSStyleDeclaration {0: "animation-delay", 1: "animation-direction", 2: "animation-duration", 3: "animation-fill-mode", 4: "animation-iteration-count", 5: "animation-name", 6: "animation-play-state", 7: "animation-timing-function", 8: "background-attachment", 9: "background-blend-mode", 10: "background-clip", 11: "background-color", 12: "background-image", 13: "background-origin", 14: "background-position", 15: "background-repeat", 16: "background-size", 17: "border-bottom-color", 18: "border-bottom-left-radius", 19: "border-bottom-right-radius", 20: "border-bottom-style", 21: "border-bottom-width", 22: "border-collapse", 23: "border-image-outset", 24: "border-image-repeat", 25: "border-image-slice", 26: "border-image-source", 27: "border-image-width", 28: "border-left-color", 29: "border-left-style", 30: "border-left-width", 31: "border-right-color", 32: "border-right-style", 33: "border-right-width", 34: "border-top-color", 35: "border-top-left-radius", 36: "border-top-right-radius", 37: "border-top-style", 38: "border-top-width", 39: "bottom", 40: "box-shadow", 41: "box-sizing", 42: "break-after", 43: "break-before", 44: "break-inside", 45: "caption-side", 46: "clear", 47: "clip", 48: "color", 49: "content", 50: "cursor", 51: "direction", 52: "display", 53: "empty-cells", 54: "float", 55: "font-family", 56: "font-kerning", 57: "font-optical-sizing", 58: "font-size", 59: "font-stretch", 60: "font-style", 61: "font-variant", 62: "font-variant-ligatures", 63: "font-variant-caps", 64: "font-variant-numeric", 65: "font-variant-east-asian", 66: "font-weight", 67: "height", 68: "image-rendering", 69: "isolation", 70: "justify-items", 71: "justify-self", 72: "left", 73: "letter-spacing", 74: "line-height", 75: "list-style-image", 76: "list-style-position", 77: "list-style-type", 78: "margin-bottom", 79: "margin-left", 80: "margin-right", 81: "margin-top", 82: "max-height", 83: "max-width", 84: "min-height", 85: "min-width", 86: "mix-blend-mode", 87: "object-fit", 88: "object-position", 89: "offset-distance", 90: "offset-path", 91: "offset-rotate", 92: "opacity", 93: "orphans", 94: "outline-color", 95: "outline-offset", 96: "outline-style", 97: "outline-width", 98: "overflow-anchor", 99: "overflow-wrap", …}
+*/
+```
+
