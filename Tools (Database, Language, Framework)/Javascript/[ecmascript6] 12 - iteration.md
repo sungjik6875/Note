@@ -388,3 +388,165 @@ console.log(first, second, rest);
 
 
 ##### 이터러블 생성(반환) 함수의 구현
+
+> 위 fibonacci 이터러블에서는 외부에서 값을 전달할 방법이 없다는 아쉬운 점이 있다. fibonacci 이터러블의 최대값을 외부에서 전달할 수 있도록 수정해보자. 이터러블의 최대 순회수를 전달받아 이터러블을 반환하는 함수를 만들면 된다.
+
+```javascript
+// 이터러블을 반환하는 함수
+const fibonacciFunc = function(max) {
+  let [pre, cur] = [0, 1];
+  
+  // Iterable
+  return {
+    [Symbol.iterator]() {
+      
+      // Iterator
+      return {
+        next() {
+          [pre, cur] = [cur, pre + cur];
+          
+          // Iterator Result Object
+          return {
+            value: cur,
+            done: cur >= max
+          };
+        }
+      };
+    }
+  };
+};
+```
+
+```javascript
+// 이터러블을 반환하는 함수에 이터러블의 최대값을 전달한다.
+for (const num of fibonacciFunc(10)) {
+  console.log(num);
+}
+// 1 2 3 5 8 
+
+for (const num of fibonacciFunc(100)) {
+  console.log(num);	// 
+}
+// 1 2 3 5 8 13 21 34 55 89
+```
+
+
+
+##### 이터러블이면서 이터레이터 객체를 생성하는 함수의 구현
+
+> 이터레이터를 생성하려면 이터러블의 Symbol.iterator 메소드를 호출해야 한다. 그런데 이터러블이면서 이터레이터인 객체를 생성하도록 구현하면 Symbol.iterator 메소드를 호출하지 않아도 된다. 자신이 곧 이터레이터이므로 소유하고 있는 next 메소드를 호출하여 자신을 순회하면 된다. 다음의 예시를 보자.
+
+```javascript
+// 이터러블이면서 이터레이터인 객체를 반환하는 함수
+const fibonacciFunc = function(max) {
+  let [pre, cur] = [0, 1];
+  
+  return {
+    // Symbol.iterator 메소드
+    [Symbol.iterator]() {
+      return this;
+    },
+    next() {
+      [pre, cur] = [cur, pre + cur];
+      return {
+        value: cur,
+        done: cur >= max
+      };
+    }
+  };
+};
+```
+
+> 이렇게 구현한 함수의 활용은 다음과 같다.
+
+```javascript
+// iter는 이터러블이면서 동시에 이터레이터이다.
+let iter = fibonacciFunc(10);
+
+// iter.next 메소드를 통해 순회가 가능하므로 iter는 이터레이터이다.
+console.log(iter.next()); // {value: 1, done: false}
+console.log(iter.next()); // {value: 2, done: false}
+console.log(iter.next()); // {value: 3, done: false}
+console.log(iter.next()); // {value: 5, done: false}
+console.log(iter.next()); // {value: 8, done: false}
+console.log(iter.next()); // {value: 13, done: true}
+
+// iter 초기화
+iter = fibonacciFunc(10);
+
+// for...of를 통해 순회 가능하므로 iter는 이터러블이다.
+for (const num of iter) {
+  console.log(num);
+}
+// 1 2 3 5 8
+```
+
+> 위 예시의 `iter` 객체가 어떻게 이터러블이면서 동시에 이터레이터인지 이터레이터 프로토콜을 확인함으로써 다시 한번 살펴보자. 앞에서 언급한 이터레이터 프로토콜에서 준수할 사항은 다음과 같았다.
+
+* 이터러블은 Symbol.iterator 메소드를 갖고 있거나, 상속받았다.
+* Symbol.iterator 메소드는 이터레이터 객체를 반환한다.
+* 이터레이터 객체는 next 메소드를 갖는다.
+* next 메소드는 Iterator Result Object({ value, done })을 반환한다.
+
+> 그리고 위에서 구현된 `iter` 객체는 다음과 같은 형태로 구현되어 있었다.
+
+```javascript
+const iter = {
+  /***/,
+  [Symbol.iterator]() {
+    return this
+  },
+  next() {
+    /***/,
+    return {
+      value: /***/,
+      done: /***/
+    }
+  }
+}
+```
+
+> 이제 `iter` 객체가 이터레이션 프로토콜을 준수하는지 확인해보자. 먼저 iter 객체의 내부에는 Symbol.iterator 메소드를 갖고 있으므로 iter는 이터러블이다. 그런데 이 Symbol.iterator는 이터레이터 객체를 반환해야 한다. 이터레이터 객체는 next 메소드가 구현된 객체여야 한다. iter의 Symbol.iterator는 자기 자신 iter를 반환하는데, iter에는 next 메소드가 구현되어 있으므로 iter의 Symbol.iterator는 이터레이터를 반환한다고 할 수 있다. 그리고 그 이터레이터는 iter이다. 마지막으로, iter의 next 메소드는 value와 done이 구현된 객체인 Iterator Result Object를 반환한다.
+>
+> 이제 위 예시의 iter는 이터러블 프로토콜과 이터레이션 프로토콜을 모두 준수함을 알 수 있다. 따라서 iter는 이터러블이자, 자기 자신을 순회하는 이터레이터이다. 
+
+
+
+##### 무한 이터러블(Infinite Iterable)과 지연 평가(Lazy Evaluation)
+
+> done 프로퍼티를 생략함으로써 무한 이터러블을 생성하는 함수를 정의할 수 있다. 무한 이터러블을 활용하여 무한 수열을 간단히 표현할 수 있다. 무한 수열에 속하는 피보나치 수열을 다시 한 번 예시로 들어보자.
+
+```javascript
+// 무한 이터러블을 생성하는 함수
+const fibonacciFunc = function() {
+  let [pre, cur] = [0, 1];
+  
+  return {
+    [Symbol.iterator]() {
+      return this;
+    },
+    next() {
+      [pre, cur] = [cur, pre + cur];
+      // done 프로퍼티를 생략한다.
+      return { value: cur };
+    }
+  };
+};
+```
+
+```javascript
+// fibonacciFunc 함수는 무한 이터러블을 생성한다.
+for (const num of fibonacciFunc()) {
+  if (num > 10000) break;
+  console.log(num);
+}
+// 1 2 3 5 8 ... 1597 2584 4181 6765
+
+// 무한 이터러블에서 세 개만을 취득한다.
+const [f1, f2, f3] = fibonacciFunc();
+console.log(f1, f2, f3);	// 1 2 3
+```
+
+> 이터러블의 역할은 데이터 공급자임을 앞서 언급한 적 있다. Array, String, Map, Set 등의 빌트인 이터러블은 데이터를 모두 메모리에 확보한 다음 동작한다. 그런데 이터러블은 지연 평가 방식으로 값을 생성한다. 지연 평가란 평가 결과가 필요할 때까지 평가를 늦추는 기법이다. 위 예시를 다시 살펴보자.
+>
+> 위 예시의 `fibonacciFunc` 함수가 생성한 피보나치 수열은 무한 이터러블이다. 그러나 피보나치 수열은 실질적으로는 데이터를 공급하는 메커니즘을 구현한 것으로 데이터 소비자인 for...of 문이나 디스트럭처링 할당이 실행되기 이전까지 데이터를 생성하지는 않는다. for...of 문의 경우, 이터러블을 순회할 때 내부에서 이터레이터의 next 메소드를 호출하는데 이 때 데이터가 생성된다. next 메소드가 호출되기 이전에는 데이터를 생성하지 않는다. 즉, 데이터가 필요할 때 까지 데이터의 생성을 지연하다가 데이터가 필요한 순간에 데이터를 생성한다.
