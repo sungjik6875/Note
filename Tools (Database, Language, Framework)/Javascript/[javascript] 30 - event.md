@@ -103,7 +103,7 @@ func2
 >
 > 이 과정을 이미지로 표현하면 다음과 같다.
 
-![example_1](./image/js_30_2.gif)
+![example_2](./image/js_30_2.gif)
 
 
 
@@ -491,4 +491,331 @@ input.onblur = function () {
 </body>
 </html>
 ```
+
+
+
+
+
+#### 이벤트의 흐름
+
+------
+
+> 계층적 구조에 포함되어 있는 HTML 요소에 이벤트가 발생할 경우 연쇄적 반응이 일어난다. 즉, 이벤트가 **전파(Propagation)**되는데 전파 방향에 따라 **버블링(Bubbling)**과 **캡처링(Capturing)**으로 구분할 수 있다.
+
+
+
+##### 버블링과 캡처링
+
+> 자식 요소에서 발생한 이벤트가 부모요소부터 시작하여 이벤트를 발생시킨 자식 요소까지 도달하는 것을 캡처링, 다시 자식 요소에서 발생한 이벤트가 부모 요소로 전파되는 것을 버블링이라 한다. 주의할 것은 **이벤트가 발생하면 캡처링과 버블링은 둘 중 하나만 발생하는 것이 아니라 캡처링부터 시작하여 버블링으로 종료한다는 것**이다. 즉, 이벤트가 발생했을 때 캡처링과 버블링은 순차적으로 발생한다.
+>
+> 캡처링은 IE8 이하에서 지원되지 않는다.
+>
+> 다음은 이벤트가 전파되는 과정을 나타낸 것이다.
+
+![example_3](./image/js_30_3.png)
+
+> addEventListener 메소드의 세 번째 매개변수에 true를 설정하면 캡처링으로 전파되는 이벤트를 캐치하고 false로 설정하거나 설정하지 않으면 버블링으로 전파되는 이벤트를 캐치한다.
+>
+> 이에 대한 예시는 다음과 같다.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    html { border:1px solid red; padding:30px; text-align: center; }
+    body { border:1px solid green; padding:30px; }
+    .top {
+      width: 300px; height: 300px;
+      background-color: red;
+      margin: auto;
+    }
+    .middle {
+      width: 200px; height: 200px;
+      background-color: blue;
+      position: relative; top: 34px; left: 50px;
+    }
+    .bottom {
+      width: 100px; height: 100px;
+      background-color: yellow;
+      position: relative; top: 34px; left: 50px;
+      line-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  body
+  <div class="top">top
+    <div class="middle">middle
+      <div class="bottom">bottom</div>
+    </div>
+  </div>
+  <script>
+  // true: capturing / false: bubbling
+  const useCapture = true;
+
+  const handler = function (e) {
+    const phases = ['capturing', 'target', 'bubbling'];
+    const node = this.nodeName + (this.className ? '.' + this.className : '');
+    // eventPhase: 이벤트 흐름 상에서 어느 phase에 있는지를 반환한다.
+    // 0 : 이벤트 없음 / 1 : 캡처링 단계 / 2 : 타깃 / 3 : 버블링 단계
+    console.log(node, phases[e.eventPhase - 1]);
+    alert(node + ' : ' + phases[e.eventPhase - 1]);
+  };
+
+  document.querySelector('html').addEventListener('click', handler, useCapture);
+  document.querySelector('body').addEventListener('click', handler, useCapture);
+
+  document.querySelector('div.top').addEventListener('click', handler, useCapture);
+  document.querySelector('div.middle').addEventListener('click', handler, useCapture);
+  document.querySelector('div.bottom').addEventListener('click', handler, useCapture);
+  </script>
+</body>
+</html>
+```
+
+> 위 html 문서를 브라우저에서 실행시킨 다음 각 요소를 클릭해보자. 하위 요소를 클릭하면 상위 요소인 html 부터 대상 요소까지 캡처링이 진행되는 과정을 확인할 수 있다. `useCapture = false`로 수정한 후 다시 클릭하면 이번에는 버블링이 진행되는 과정을 확인할 수 있다.
+>
+> 가장 하위 요소인 `div.bottom` 요소를 클릭할 경우를 예로 들어보자. 먼저 캡처링을 감지하는 경우에 대해서는 다음과 같은 순서로 이벤트 핸들러가 호출된다.
+
+```
+1. Capturing Phase
+html > body > div.top > div.middle 
+
+2. Target Phase 
+> div.bottom [종료]
+
+3. Bubbling Phase 
+: 버블링은 감지하지 않으므로 어떤 이벤트 핸들러도 호출되지 않는다.
+```
+
+> 버블링을 감지하는 경우에 대해서는 다음과 같은 순서로 이벤트 핸들러가 호출된다.
+
+```
+1. Capturing Phase
+: 캡처링은 감지하지 않으므로 어떤 이벤트 핸들러도 호출되지 않는다.
+
+2. Target Phase
+div.bottom >
+
+3. Bubbling Phase
+div.middle > div.top > body > html [종료]
+```
+
+
+
+> 이벤트 전파 과정을 더욱 확실히 살펴보기 위해 다른 예시를 들어보자.
+>
+> 먼저 캡처링을 감지하는 경우의 예시이다.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    html, body { height: 100%; }
+  </style>
+<body>
+  <p>이벤트 <button>버튼</button></p>
+  <script>
+    const body = document.querySelector('body');
+    const para = document.querySelector('p');
+    const button = document.querySelector('button');
+    
+    const useCapture = true;
+
+    // body Event Handler
+    body.addEventListener('click', function () {
+      console.log('Handler for body.');
+    }, useCapture);
+
+    // p Event Handler
+    para.addEventListener('click', function () {
+      console.log('Handler for paragraph.');
+    }, useCapture);
+
+    // button Event Handler
+    button.addEventListener('click', function () {
+      console.log('Handler for button.');
+    }, useCapture);
+  </script>
+</body>
+</html>
+```
+
+> 이 때 가장 하위 요소인 버튼을 클릭하면 콘솔에 다음과 같이 출력된다.
+
+```
+Handler for body.
+Handler for paragraph.
+Handler for button.
+```
+
+> 캡처링을 감지하였으므로 부모 요소부터 대상 요소까지 이벤트가 전파되는 과정을 확인할 수 있었다. 이번엔 버블링을 감지하기 위해 다음과 같이 스크립트를 수정한다.
+
+```javascript
+const useCapture = false;
+```
+
+> 다시 버튼을 클릭하면 이번에는 콘솔에 다음과 같이 출력된다.
+
+```
+Handler for button.
+Handler for paragraph.
+Handler for body.
+```
+
+> 버블링을 감지하였으므로 대상 요소부터 부모 요소로 이벤트가 전파되는 과정을 확인할 수 있었다. 
+>
+> 만약, 다음과 같이 스크립트를 수정한다면 캡처링과 버블링을 모두 감지할 것이다.
+
+```javascript
+const useCapture = true;
+const useBubble = false;
+
+// 캡처링
+body.addEventListener('click', function () {
+  console.log('Handler for body.');
+}, useCapture);
+
+para.addEventListener('click', function () {
+  console.log('Handler for paragraph.');
+}, useCapture) ;
+
+button.addEventListener('click', function () {
+  console.log('Handler for button.');
+}, useCapture);
+
+
+// 버블링
+body.addEventListener('click', function () {
+  console.log('Handler for body.');
+}, useBubble);
+
+para.addEventListener('click', function () {
+  console.log('Handler for paragraph.');
+}, useBubble) ;
+
+button.addEventListener('click', function () {
+  console.log('Handler for button.');
+}, useBubble);
+```
+
+> 이 때 버튼을 클릭하면 콘솔에 다음과 같이 출력된다. 출력 결과를 통해 캡처링이 버블링보다 먼저 진행되는 것을 알 수 있다.
+
+```
+(캡처링 감지)
+Handler for body.
+Handler for paragraph.
+Handler for button.
+
+(버블링 감지)
+Handler for button.
+Handler for paragraph.
+Handler for body.
+```
+
+
+
+
+
+#### 이벤트 객체
+
+------
+
+> 이벤트 객체는 이벤트를 발생시킨 요소와 발생한 이벤트에 대한 유용한 정보를 제공한다. 이벤트가 발생하면 이벤트 객체는 동적으로 생성되며 이벤트를 처리할 수 있는 이벤트 핸들러에 인자로 전달된다.
+>
+> 예시는 다음과 같다.
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <p>클릭하세요. 클릭한 곳의 좌표가 표시됩니다.</p>
+  <em class="message"></em>
+  
+  <script>
+    const msg = document.querySelector('.message');
+
+    function showCoords(e) { 
+      // e: event object  
+      msg.innerHTML =
+        'clientX value: ' + e.clientX + '<br>' +
+        'clientY value: ' + e.clientY;
+    }
+
+    addEventListener('click', showCoords);
+  </script>
+</body>
+</html>
+```
+
+> 위 문서를 브라우저에서 실행시키면 다음과 같다.
+
+![example_4](./image/js_30_4.png)
+
+> 위 예시의 스크립트에서 `e`가 이벤트 객체이다. 이벤트 객체는 이벤트 핸들러에 암묵적으로 전달된다. 다만 이벤트 핸들러 선언시 이벤트 객체를 전달받을 첫 번째 매개변수를 명시적으로 선언해야 한다.
+>
+> 만약 이벤트 핸들러에 이벤트 객체 외에도 인자가 필요하다면, 다음 예시와 같은 형식으로 이벤트 핸들러를 선언하면 된다.
+
+```html
+<em class="message"></em>
+
+<script>
+  const msg = document.querySelector('.message');
+  
+  function showCoords(e, msg) {
+    msg.innerHTML =
+      'clientX value: ' + e.clientX + '<br>' +
+      'clientY value: ' + e.clientY;
+  }
+
+  addEventListener('click', function(e) {
+    showCoords(e, msg);
+	});
+</script>
+```
+
+
+
+##### 이벤트 객체의 프로퍼티
+
+> 이벤트 객체의 프로퍼티는 이벤트에 대한 유용한 정보를 제공한다.
+
+> ##### Event.target
+>
+> 실제로 이벤트를 발생시킨 요소를 가리킨다. 다음의 예시를 보자.
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <div class="container">
+    <button id="btn1">Hide me 1</button>
+    <button id="btn2">Hide me 2</button>
+  </div>
+
+  <script>
+    function hide(e) {
+      e.target.style.visibility = 'hidden';
+    }
+
+    document.getElementById('btn1').addEventListener('click', hide);
+    document.getElementById('btn2').addEventListener('click', hide);
+  </script>
+</body>
+</html>
+```
+
+> 위 예시의 문서를 브라우저에서 실행하면 다음과 같다.
+
+![example_5](./image/js_30_5.png)
+
+> 위 예시에서 각 버튼을 클릭하면 각 버튼에 바인딩된 이벤트 핸들러가 호출된다. 위 예시의 이벤트 핸들러인 `hide` 내부의 `e.target` 
+
+
+
+> ##### Event.currentTarget
+>
+> 이벤트에 바인딩된 DOM 요소를 가리킨다. addEventListener 앞에 기술된 객체를 의미한다. 따라서 이벤트 핸들러 내부의 this와 항상 일치한다.
 
