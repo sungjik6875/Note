@@ -811,7 +811,33 @@ Handler for body.
 
 ![example_5](./image/js_30_5.png)
 
-> 위 예시에서 각 버튼을 클릭하면 각 버튼에 바인딩된 이벤트 핸들러가 호출된다. 위 예시의 이벤트 핸들러인 `hide` 내부의 `e.target` 
+> 위 예시에서 각 버튼을 클릭하면 각 버튼에 바인딩된 이벤트 핸들러가 호출된다. 위 예시의 이벤트 핸들러인 `hide` 내부의 `e.target` 은 이벤트를 발생시킨 요소를 가리키므로 두 개의 버튼을 가리킨다. 이 예시에서는 이벤트가 바인딩된 요소 역시 두 개의 버튼이므로 e.target은 this와 일치한다.
+>
+> 그러나 버튼 별로 이벤트를 바인딩하는 방식은 버튼이 많은 경우에는 바람직하지 않다. 위 예시의 스크립트를 아래에서 살펴볼 **이벤트 위임** 방식으로 수정한 예시는 다음과 같다.
+
+```javascript
+<!DOCTYPE html>
+<html>
+<body>
+  <div class="container">
+    <button id="btn1">Hide me 1</button>
+    <button id="btn2">Hide me 2</button>
+  </div>
+
+  <script>
+    const container = document.querySelector('.container');
+
+    function hide(e) {
+      // e.target은 실제로 이벤트를 발생시킨 DOM 요소를 가리킨다.
+      e.target.style.visibility = 'hidden';
+      // this는 이벤트에 바인딩된 DOM 요소(.container)를 가리킨다. 따라서 .container 요소를 감춘다.
+    }
+
+    container.addEventListener('click', hide);
+  </script>
+</body>
+</html>
+```
 
 
 
