@@ -1,26 +1,4 @@
-## HTTP Request
-
-클라이언트가 서버로 보내는 요청을 의미하며, HTTP에서의 요청 메시지는 다음과 같은 형식을 갖고 있다.
-
-```
-GET /index.html HTTP/1.1
-Host: developer.mozilla.org
-...
-```
-
-첫 줄은 HTTP Method, URL 경로, HTTP 버전에 대한 정보를 담고 있다. 그 밑으로는 헤더 정보들이 위치한다. 
-
-
-
-### HTTP Request Header
-
-------
-
-To Do..
-
-
-
-### HTTP Request Method
+### HTTP Method
 
 ------
 
